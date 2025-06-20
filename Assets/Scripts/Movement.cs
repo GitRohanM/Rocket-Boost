@@ -50,6 +50,11 @@ public class Movement : MonoBehaviour
 
     private void ApplyRotation(float rotationThisFrame)
     {
+        rb.freezeRotation = true; // Freeze rotation to prevent physics from interfering
+
+        //Dynamically rotate the ship
         transform.Rotate(Vector3.forward * rotationThisFrame * Time.deltaTime);
+
+        rb.freezeRotation = false; // Unfreeze rotation so physics can take over again
     }
 }
