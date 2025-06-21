@@ -9,10 +9,12 @@ public class Movement : MonoBehaviour
     [SerializeField] float thrustStrength = 100f;
     [SerializeField] float rotationStrength = 100f;
     Rigidbody rb;
+    AudioSource audioSource;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        audioSource = GetComponent<AudioSource>();
     }
     void OnEnable()
     {
@@ -30,8 +32,17 @@ public class Movement : MonoBehaviour
     {
         if (thrust.IsPressed())
         {
-            rb.AddRelativeForce(Vector3.up * thrustStrength *Time.deltaTime );
+            rb.AddRelativeForce(Vector3.up * thrustStrength * Time.deltaTime);
+            if (!audioSource.isPlaying)
+            {
+                audioSource.Play(); // Play thrust sound if not already playing
+            }
         }
+        else
+        {
+            audioSource.Stop(); // Stop thrust sound if thrust is not pressed
+        }
+
     }
     private void ProcessRotation()
     {
@@ -53,7 +64,7 @@ public class Movement : MonoBehaviour
         rb.freezeRotation = true; // Freeze rotation to prevent physics from interfering
 
         //Dynamically rotate the ship
-        transform.Rotate(Vector3.forward * rotationThisFrame * Time.deltaTime);
+        transform.Rotate(Vector3.forward * rotationThisFrame * Time.deltaTime); 
 
         rb.freezeRotation = false; // Unfreeze rotation so physics can take over again
     }
