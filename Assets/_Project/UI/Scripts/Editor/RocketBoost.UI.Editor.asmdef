@@ -1,0 +1,23 @@
+{
+    "name": "RocketBoost.UI.Editor",
+    "rootNamespace": "RocketBoost.UI.Editor",
+    "references": [
+        "RocketBoost.Core",
+        "RocketBoost.Runtime",
+        "RocketBoost.UI",
+        "Unity.TextMeshPro",
+        "UnityEngine.UI",
+        "Unity.InputSystem"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

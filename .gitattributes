@@ -1,0 +1,75 @@
+# Unity project attributes.
+# Normalizes line endings and enables UnityYAMLMerge for scene/prefab conflicts.
+#
+# To use UnityYAMLMerge, register it once per clone:
+#   git config merge.unityyamlmerge.name "Unity SmartMerge"
+#   git config merge.unityyamlmerge.driver '"C:/Program Files/Unity/Hub/Editor/<version>/Editor/Data/Tools/UnityYAMLMerge.exe" merge -p "%O" "%A" "%B" "%A"'
+#
+# See https://docs.unity3d.com/Manual/SmartMerge.html
+
+* text=auto
+
+# ---------------------------------------------------------------------------
+# Unity YAML assets: keep them as text so they can be reviewed and merged.
+# ---------------------------------------------------------------------------
+*.unity        text merge=unityyamlmerge eol=lf
+*.prefab       text merge=unityyamlmerge eol=lf
+*.asset        text merge=unityyamlmerge eol=lf
+*.meta         text merge=unityyamlmerge eol=lf
+*.mat          text merge=unityyamlmerge eol=lf
+*.anim         text merge=unityyamlmerge eol=lf
+*.controller   text merge=unityyamlmerge eol=lf
+*.overrideController text merge=unityyamlmerge eol=lf
+*.physicMaterial     text merge=unityyamlmerge eol=lf
+*.physicsMaterial2D  text merge=unityyamlmerge eol=lf
+*.preset       text merge=unityyamlmerge eol=lf
+*.shadergraph  text merge=unityyamlmerge eol=lf
+*.shadersubgraph     text merge=unityyamlmerge eol=lf
+*.inputactions text merge=unityyamlmerge eol=lf
+
+# ---------------------------------------------------------------------------
+# C# / shader sources
+# ---------------------------------------------------------------------------
+*.cs           text diff=csharp eol=lf
+*.shader       text eol=lf
+*.hlsl         text eol=lf
+*.cginc        text eol=lf
+*.compute      text eol=lf
+*.json         text eol=lf
+*.md           text eol=lf
+*.yml          text eol=lf
+*.yaml         text eol=lf
+
+# ---------------------------------------------------------------------------
+# Binary assets: never attempt text merging.
+# ---------------------------------------------------------------------------
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.tga  binary
+*.psd  binary
+*.exr  binary
+*.hdr  binary
+*.tif  binary
+*.tiff binary
+*.gif  binary
+*.bmp  binary
+*.fbx  binary
+*.obj  binary
+*.blend binary
+*.dds  binary
+*.wav  binary
+*.mp3  binary
+*.ogg  binary
+*.aif  binary
+*.aiff binary
+*.ttf  binary
+*.otf  binary
+*.dll  binary
+*.pdb  binary
+*.so   binary
+*.a    binary
+*.lib  binary
+*.jar  binary
+*.aar  binary
+*.unitypackage binary

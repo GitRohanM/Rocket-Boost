@@ -1,0 +1,105 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f3b5725ae01d1744aff36b21d0510aa, type: 3}
+  m_Name: UITheme
+  m_EditorClassIdentifier: 
+  background: {r: 0.027, g: 0.043, b: 0.094, a: 1}
+  backgroundDeep: {r: 0.01, g: 0.016, b: 0.04, a: 1}
+  surface: {r: 0.055, g: 0.082, b: 0.149, a: 0.92}
+  surfaceRaised: {r: 0.078, g: 0.114, b: 0.196, a: 0.96}
+  primary: {r: 0.207, g: 0.902, b: 1, a: 1}
+  primaryDim: {r: 0.09, g: 0.4, b: 0.56, a: 1}
+  secondary: {r: 1, g: 0.478, b: 0.184, a: 1}
+  danger: {r: 1, g: 0.302, b: 0.369, a: 1}
+  success: {r: 0.357, g: 0.894, b: 0.608, a: 1}
+  warning: {r: 1, g: 0.776, b: 0.298, a: 1}
+  textPrimary: {r: 0.925, g: 0.957, b: 1, a: 1}
+  textSecondary: {r: 0.608, g: 0.69, b: 0.812, a: 1}
+  textMuted: {r: 0.396, g: 0.478, b: 0.604, a: 1}
+  border: {r: 0.207, g: 0.902, b: 1, a: 0.35}
+  borderDim: {r: 0.38, g: 0.47, b: 0.62, a: 0.22}
+  scrim: {r: 0.004, g: 0.007, b: 0.02, a: 0.78}
+  starGold: {r: 1, g: 0.812, b: 0.361, a: 1}
+  starEmpty: {r: 0.18, g: 0.227, b: 0.318, a: 1}
+  displayFont: {fileID: 11400000, guid: 31d9c6826684a584682db356063d6418, type: 2}
+  bodyFont: {fileID: 11400000, guid: 6a2a4870dd473d84096de5caa63f26d7, type: 2}
+  displayTracking: 5
+  titleSize: 108
+  headingSize: 40
+  bodySize: 24
+  labelSize: 18
+  spaceXs: 4
+  spaceSm: 8
+  spaceMd: 16
+  spaceLg: 24
+  spaceXl: 40
+  spaceXxl: 64
+  screenMargin: 72
+  radiusSm: 10
+  radiusMd: 16
+  radiusLg: 24
+  durationFast: 0.12
+  durationNormal: 0.22
+  durationSlow: 0.42
+  durationScreenFade: 0.3
+  countUpDuration: 0.9
+  hoverScale: 1.035
+  pressScale: 0.965
+  stagger: 0.06
+  panelSprite: {fileID: 21300000, guid: aa82bea1e31e125459b137e15db73af4, type: 3}
+  panelDeepSprite: {fileID: 21300000, guid: 36c68f1b61781fb43ac690ec1c8bec36, type: 3}
+  cardSprite: {fileID: 21300000, guid: cdf1d19d9d81c8e478104b78b2a3f14e, type: 3}
+  buttonNormalSprite: {fileID: 21300000, guid: 275731be341407841906bac6fb6e26eb, type: 3}
+  buttonHoverSprite: {fileID: 21300000, guid: 334bf311b1d77824c8cef378f16af915, type: 3}
+  buttonPressedSprite: {fileID: 21300000, guid: 0e6890df2aab1fb46bf7119b05dbc847, type: 3}
+  buttonSelectedSprite: {fileID: 21300000, guid: e2b64be02659c4e41b9d96dae2663d28, type: 3}
+  buttonBorderSprite: {fileID: 21300000, guid: ada79e8fbbce0c04eb4038c6daea03c6, type: 3}
+  buttonDisabledSprite: {fileID: 21300000, guid: b32cf3502e2460b4e939cb0d52b6cf39, type: 3}
+  pillSprite: {fileID: 21300000, guid: e8f7abc89f2e2d3499f73f490fc22d7b, type: 3}
+  gaugeTrackSprite: {fileID: 21300000, guid: 83957e92075faca478716d43e4a0529a, type: 3}
+  gaugeFillSprite: {fileID: 21300000, guid: 1129eb5663215f240944fcd0de12d758, type: 3}
+  sliderHandleSprite: {fileID: 21300000, guid: a762d84bd9dbe044290418fe7b5bcc07, type: 3}
+  backgroundGradientSprite: {fileID: 21300000, guid: 87e1334b1aee04c4eaa941439b1ce485, type: 3}
+  glowSprite: {fileID: 21300000, guid: 5d4256254e82c104d983b82f876bde16, type: 3}
+  softDotSprite: {fileID: 21300000, guid: 035a7a5e9ba37654ea4625b94ed9bd0b, type: 3}
+  starSprite: {fileID: 21300000, guid: 2d7d07e145cb5584cb494f6d48da3175, type: 3}
+  starOutlineSprite: {fileID: 21300000, guid: 839f064e77b1e384cb832c17da035924, type: 3}
+  starSmallSprite: {fileID: 21300000, guid: d52cef802c1f4a547a6bf794cb835df7, type: 3}
+  vignetteSprite: {fileID: 21300000, guid: 0d8333aff24e25345b196819446c49da, type: 3}
+  scanlineSprite: {fileID: 21300000, guid: da8528b512de4a24fb15e5fd0521f3b1, type: 3}
+  nebulaSprite: {fileID: 21300000, guid: 86eca7b090ba7cf4284270a5971257e7, type: 3}
+  ringSprite: {fileID: 21300000, guid: a60018d44c38df1489a073e5314ef2fb, type: 3}
+  logoRimSprite: {fileID: 0}
+  iconPlay: {fileID: 21300000, guid: 522e17f335e4c874ab7f84385820927c, type: 3}
+  iconPause: {fileID: 21300000, guid: 9c70637969b2d594f80e64c86a609d37, type: 3}
+  iconRestart: {fileID: 21300000, guid: 06c1f1732d6eb9c47a440d1318196a75, type: 3}
+  iconSettings: {fileID: 21300000, guid: ee454e2c9cd81b84c90803b3a9f68703, type: 3}
+  iconHome: {fileID: 21300000, guid: 933b754898ef1b246bfaa5f58687ce29, type: 3}
+  iconChevronLeft: {fileID: 21300000, guid: b95c7c87e54b98248a9f20567a1a17a1, type: 3}
+  iconChevronRight: {fileID: 21300000, guid: a1380a4565b52e9499d533d93a579030, type: 3}
+  iconLock: {fileID: 21300000, guid: 2220498e42386c741b253d5ebe277e45, type: 3}
+  iconCheck: {fileID: 21300000, guid: faec11589924b0e4c9e57a61a1c8079d, type: 3}
+  iconVolume: {fileID: 21300000, guid: 4bebf2a0092a93f4bbdce8509ddb2729, type: 3}
+  iconFullscreen: {fileID: 21300000, guid: b145ffd465327904f94e17a0e81766e1, type: 3}
+  iconKeyboard: {fileID: 21300000, guid: 6de27b93406d29e42b7c34cbd15b38dc, type: 3}
+  iconGamepad: {fileID: 21300000, guid: de7bde025c7660f4c943bde07cd215b5, type: 3}
+  iconStar: {fileID: 21300000, guid: 2e1a192fde8dbd748a8db67dcf32af12, type: 3}
+  hoverClip: {fileID: 8300000, guid: 38e66c54a0c9edf40997c8a8517cf5bf, type: 3}
+  clickClip: {fileID: 8300000, guid: 813eadf95f3b037489fe7dca4652f860, type: 3}
+  backClip: {fileID: 8300000, guid: 20d6a74a49a72c344a6fdc2c3420e538, type: 3}
+  confirmClip: {fileID: 8300000, guid: d69c416295ac6bc43bc61c94d8aa5303, type: 3}
+  levelCompleteClip: {fileID: 8300000, guid: 49da56bc870b27f4aad4ff0ff7439164, type: 3}
+  crashClip: {fileID: 8300000, guid: 831b8732e42cca347a77735f08280c3a, type: 3}
+  menuMusic: {fileID: 8300000, guid: e3890d4978f871f47b6390ff2b9f98c1, type: 3}
+  masterGroup: {fileID: 24300002, guid: 884554bb606b959468dfbcb4cc2ead83, type: 2}
+  musicGroup: {fileID: -2351287443323038887, guid: 884554bb606b959468dfbcb4cc2ead83, type: 2}
+  sfxGroup: {fileID: -7800908032509910449, guid: 884554bb606b959468dfbcb4cc2ead83, type: 2}

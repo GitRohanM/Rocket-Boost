@@ -1,119 +1,214 @@
-using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class Movement : MonoBehaviour
+namespace RocketBoost
 {
-    [SerializeField] InputAction thrust;
-    [SerializeField] InputAction rotation;
-    [SerializeField] float thrustStrength = 100f;
-    [SerializeField] float rotationStrength = 100f;
-    [SerializeField] AudioClip mainEngineSFX;
-    [SerializeField] ParticleSystem mainEngineParticles;
-    [SerializeField] ParticleSystem leftThrusterParticles;
-    [SerializeField] ParticleSystem rightThrusterParticles;
-
-    Rigidbody rb;
-    AudioSource audioSource;
-
-    void Start()
+    /// <summary>
+    /// Reads thrust and rotation input and applies it to the rocket's Rigidbody.
+    /// Rotation is driven directly on the transform because the Rigidbody has frozen
+    /// rotation and no angular velocity.
+    /// </summary>
+    [DisallowMultipleComponent]
+    [RequireComponent(typeof(Rigidbody))]
+    [RequireComponent(typeof(AudioSource))]
+    public class Movement : MonoBehaviour
     {
-        rb = GetComponent<Rigidbody>();
-        audioSource = GetComponent<AudioSource>();
-    }
+        [Header("Input Actions")]
+        [Tooltip("Hold action bound to the thrust control. Serialized inline as a singleton action.")]
+        [SerializeField] private InputAction thrust;
 
-    void OnEnable()
-    {
-        thrust.Enable();
-        rotation.Enable();
-    }
+        [Tooltip("1D axis action bound to the rotation controls. Serialized inline as a singleton action.")]
+        [SerializeField] private InputAction rotation;
 
-    private void FixedUpdate()
-    {
-        ProcessThrust();
-        ProcessRotation();
-    }
+        [Header("Movement Settings")]
+        [SerializeField] private float thrustStrength = 100f;
+        [SerializeField] private float rotationStrength = 100f;
 
-    private void ProcessThrust()
-    {
-        if (thrust.IsPressed())
+        [Header("Audio Feedback")]
+        [SerializeField] private AudioClip mainEngineSFX;
+
+        [Header("Visual Particles")]
+        [SerializeField] private ParticleSystem mainEngineParticles;
+        [SerializeField] private ParticleSystem leftThrusterParticles;
+        [SerializeField] private ParticleSystem rightThrusterParticles;
+
+        private Rigidbody rb;
+        private AudioSource audioSource;
+
+        /// <summary>True while the thrust action is held.</summary>
+        public bool IsThrusting => thrust != null && thrust.enabled && thrust.IsPressed();
+
+        /// <summary>Current speed in metres per second.</summary>
+        public float VelocityMagnitude => rb != null ? rb.linearVelocity.magnitude : 0f;
+
+        private void Awake()
         {
-           StartThrusting();
+            rb = GetComponent<Rigidbody>();
+            audioSource = GetComponent<AudioSource>();
+
+            if (rb != null)
+            {
+                rb.freezeRotation = true;
+            }
+
+            if (audioSource != null && mainEngineSFX != null)
+            {
+                audioSource.clip = mainEngineSFX;
+                audioSource.loop = true;
+            }
+
+            WarnIfInputMissing();
         }
-        else
+
+        private void OnEnable()
         {
+            thrust?.Enable();
+            rotation?.Enable();
+        }
+
+        private void OnDisable()
+        {
+            thrust?.Disable();
+            rotation?.Disable();
+            StopThrusting();
+            StopRotation();
+        }
+
+        private void FixedUpdate()
+        {
+            ProcessThrust();
+            ProcessRotation();
+        }
+
+        private void WarnIfInputMissing()
+        {
+            if (thrust == null)
+            {
+                Debug.LogError(
+                    "[Movement] No thrust InputAction assigned. Bind an action to the rocket in the Inspector.",
+                    this);
+            }
+
+            if (rotation == null)
+            {
+                Debug.LogError(
+                    "[Movement] No rotation InputAction assigned. Bind an action to the rocket in the Inspector.",
+                    this);
+            }
+        }
+
+        private void ProcessThrust()
+        {
+            if (IsThrusting)
+            {
+                StartThrusting();
+                return;
+            }
+
             StopThrusting();
         }
 
-    }
-
-    void StartThrusting(){
-         rb.AddRelativeForce(Vector3.up * thrustStrength * Time.deltaTime);
-            if (!audioSource.isPlaying)
+        private void StartThrusting()
+        {
+            if (rb != null)
             {
-                audioSource.PlayOneShot(mainEngineSFX, volumeScale: 2f); 
+                // Keep the existing force curve: thrustStrength is tuned in the prefab and
+                // is applied per fixed step, as in the original arcade feel.
+                rb.AddRelativeForce(Vector3.up * thrustStrength * Time.fixedDeltaTime);
             }
-            if(!mainEngineParticles.isPlaying)
+
+            if (audioSource != null && !audioSource.isPlaying && audioSource.clip != null)
+            {
+                audioSource.Play();
+            }
+
+            if (mainEngineParticles != null && !mainEngineParticles.isPlaying)
             {
                 mainEngineParticles.Play();
             }
-    }
+        }
 
-    void StopThrusting()
-    {
-        audioSource.Stop(); 
-        mainEngineParticles.Stop();
-    }
-    void ProcessRotation()
-    {
-        float rotationInput = rotation.ReadValue<float>();
-
-        if (rotationInput < 0)
+        private void StopThrusting()
         {
-            RotateRight();
+            // Only stop the shared source when the engine loop is what is playing, so
+            // crash/success one-shots are not cut off.
+            if (audioSource != null && audioSource.isPlaying && audioSource.clip == mainEngineSFX)
+            {
+                audioSource.Stop();
+            }
+
+            if (mainEngineParticles != null && mainEngineParticles.isPlaying)
+            {
+                mainEngineParticles.Stop();
+            }
         }
-        else if (rotationInput > 0)
+
+        private void ProcessRotation()
         {
-            RotateLeft();
-        }
-        else{
-            StopRotation();
-        }
-        
-    }
+            if (rotation == null)
+            {
+                return;
+            }
 
-    void RotateRight()
-    {
-        ApplyRotation(rotationStrength);
-        if(!rightThrusterParticles.isPlaying)
+            float rotationInput = rotation.ReadValue<float>();
+
+            if (rotationInput < 0f)
+            {
+                RotateRight();
+            }
+            else if (rotationInput > 0f)
+            {
+                RotateLeft();
+            }
+            else
+            {
+                StopRotation();
+            }
+        }
+
+        private void RotateRight()
         {
-            leftThrusterParticles.Stop();
-            rightThrusterParticles.Play();
+            ApplyRotation(rotationStrength);
+            PlayThrusterParticles(leftThrusterParticles, rightThrusterParticles);
         }
-    }
 
-    void RotateLeft(){
-        ApplyRotation(-rotationStrength);
-        if(!leftThrusterParticles.isPlaying)
+        private void RotateLeft()
         {
-            rightThrusterParticles.Stop();
-            leftThrusterParticles.Play();
+            ApplyRotation(-rotationStrength);
+            PlayThrusterParticles(rightThrusterParticles, leftThrusterParticles);
         }
-    }
 
-    void StopRotation()
-    {
-        rightThrusterParticles.Stop();
-        leftThrusterParticles.Stop();
-    }
+        private void PlayThrusterParticles(ParticleSystem active, ParticleSystem inactive)
+        {
+            if (active == null || active.isPlaying)
+            {
+                return;
+            }
 
-    private void ApplyRotation(float rotationThisFrame)
-    {
-        rb.freezeRotation = true; // Freeze rotation to prevent physics from interfering
+            if (inactive != null)
+            {
+                inactive.Stop();
+            }
 
-        //Dynamically rotate the ship
-        transform.Rotate(Vector3.forward * rotationThisFrame * Time.deltaTime); 
+            active.Play();
+        }
 
-        rb.freezeRotation = false; // Unfreeze rotation so physics can take over again
+        private void StopRotation()
+        {
+            if (rightThrusterParticles != null && rightThrusterParticles.isPlaying)
+            {
+                rightThrusterParticles.Stop();
+            }
+
+            if (leftThrusterParticles != null && leftThrusterParticles.isPlaying)
+            {
+                leftThrusterParticles.Stop();
+            }
+        }
+
+        private void ApplyRotation(float rotationThisFrame)
+        {
+            transform.Rotate(Vector3.forward * rotationThisFrame * Time.fixedDeltaTime);
+        }
     }
 }
