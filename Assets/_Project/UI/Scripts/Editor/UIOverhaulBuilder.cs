@@ -38,7 +38,7 @@ namespace RocketBoost.UI.Editor
 
         private static readonly List<string> sceneProblems = new List<string>();
 
-        [MenuItem("Rocket Boost/UI/Rebuild UI System", priority = 0)]
+        [MenuItem("Rocket Boost/Rebuild UI System", priority = 0)]
         public static void BuildAll()
         {
             Debug.Log("[UIOverhaul] Build started.");
@@ -84,7 +84,7 @@ namespace RocketBoost.UI.Editor
             Debug.Log("[UIOverhaul] Build finished.");
         }
 
-        [MenuItem("Rocket Boost/UI/Verify UI Content", priority = 1)]
+        [MenuItem("Rocket Boost/Verify UI Content", priority = 1)]
         public static void Validate()
         {
             int problems = 0;

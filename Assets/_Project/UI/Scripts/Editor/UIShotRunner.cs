@@ -15,7 +15,7 @@ namespace RocketBoost.UI.Editor
     /// </summary>
     public static class UIShotRunner
     {
-        private const string MenuPath = "Rocket Boost/UI/Capture Screenshots";
+        private const string MenuPath = "Rocket Boost/Capture Screenshots";
         private static readonly string OutputRoot = Path.GetFullPath("Logs/UI-Shots");
 
         private static float nextStepAt;
@@ -34,19 +34,7 @@ namespace RocketBoost.UI.Editor
             ? OutputRoot
             : Path.Combine(OutputRoot, captureFolder);
 
-        [MenuItem(MenuPath, priority = 20)]
-        public static void CaptureAll() => CaptureOne(1920, 1080, string.Empty);
-
-        [MenuItem(MenuPath + " (1280x720)", priority = 21)]
-        public static void Capture720p() => CaptureOne(1280, 720, "1280x720");
-
-        [MenuItem(MenuPath + " (2560x1080)", priority = 22)]
-        public static void CaptureUltraWide() => CaptureOne(2560, 1080, "2560x1080");
-
-        [MenuItem(MenuPath + " (Portrait 1080x1920)", priority = 23)]
-        public static void CapturePortrait() => CaptureOne(1080, 1920, "portrait");
-
-        [MenuItem("Rocket Boost/UI/Capture All Resolutions", priority = 24)]
+        [MenuItem("Rocket Boost/Capture Screenshots/All Resolutions (Recommended)", priority = 20)]
         public static void CaptureAllResolutions()
         {
             Pending.Clear();
@@ -57,6 +45,18 @@ namespace RocketBoost.UI.Editor
             (int width, int height, string folder) = Pending.Dequeue();
             RequestCapture(width, height, folder);
         }
+
+        [MenuItem("Rocket Boost/Capture Screenshots/1080p (1920x1080)", priority = 21)]
+        public static void CaptureAll() => CaptureOne(1920, 1080, string.Empty);
+
+        [MenuItem("Rocket Boost/Capture Screenshots/720p (1280x720)", priority = 22)]
+        public static void Capture720p() => CaptureOne(1280, 720, "1280x720");
+
+        [MenuItem("Rocket Boost/Capture Screenshots/Ultrawide (2560x1080)", priority = 23)]
+        public static void CaptureUltraWide() => CaptureOne(2560, 1080, "2560x1080");
+
+        [MenuItem("Rocket Boost/Capture Screenshots/Portrait (1080x1920)", priority = 24)]
+        public static void CapturePortrait() => CaptureOne(1080, 1920, "portrait");
 
         private static void CaptureOne(int width, int height, string folder)
         {
