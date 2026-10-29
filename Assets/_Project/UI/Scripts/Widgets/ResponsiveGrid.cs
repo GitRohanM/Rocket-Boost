@@ -59,7 +59,7 @@ namespace RocketBoost.UI
             grid.spacing = portrait ? portraitSpacing : landscapeSpacing;
             grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
             grid.constraintCount = portrait ? portraitColumns : landscapeColumns;
-            grid.childAlignment = TextAnchor.UpperCenter;
+            grid.childAlignment = TextAnchor.MiddleCenter;
         }
     }
 }

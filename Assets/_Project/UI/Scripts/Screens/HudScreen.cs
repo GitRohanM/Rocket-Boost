@@ -47,7 +47,9 @@ namespace RocketBoost.UI
                 pauseButton.Button.onClick.AddListener(() => Manager.OpenPause());
             }
 
-            SetDefaultSelection(pauseButton != null ? pauseButton.Button : null);
+            // Gameplay chrome must not own a uGUI selection: Space (thrust) is also the
+            // legacy Submit key, so a focused Pause button would re-open the menu mid-flight.
+            SetDefaultSelection(null);
         }
 
         protected override void OnShown()

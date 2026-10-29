@@ -55,6 +55,25 @@ MonoBehaviour:
   hoverScale: 1.035
   pressScale: 0.965
   stagger: 0.06
+  menuListWidth: 680
+  menuListHeight: 60
+  menuListSpacing: 74
+  menuListSize: 33
+  menuListTracking: 6
+  menuSelectedScale: 1.06
+  menuEyebrowSize: 17
+  menuHintSize: 20
+  selectionBarWidth: 330
+  selectionBarHeight: 16
+  promptStripHeight: 76
+  promptGlyphSize: 30
+  promptLabelSize: 18
+  keyCapHeight: 34
+  keyCapRowHeight: 52
+  keyCapMinWidth: 48
+  keyCapPadding: 26
+  keyCapCharWidth: 11
+  keyCapGap: 10
   panelSprite: {fileID: 21300000, guid: aa82bea1e31e125459b137e15db73af4, type: 3}
   panelDeepSprite: {fileID: 21300000, guid: 36c68f1b61781fb43ac690ec1c8bec36, type: 3}
   cardSprite: {fileID: 21300000, guid: cdf1d19d9d81c8e478104b78b2a3f14e, type: 3}
@@ -68,6 +87,7 @@ MonoBehaviour:
   gaugeTrackSprite: {fileID: 21300000, guid: 83957e92075faca478716d43e4a0529a, type: 3}
   gaugeFillSprite: {fileID: 21300000, guid: 1129eb5663215f240944fcd0de12d758, type: 3}
   sliderHandleSprite: {fileID: 21300000, guid: a762d84bd9dbe044290418fe7b5bcc07, type: 3}
+  selectionStreakSprite: {fileID: 21300000, guid: bbb8266e94527fe4fba5d09b0660a0ae, type: 3}
   backgroundGradientSprite: {fileID: 21300000, guid: 87e1334b1aee04c4eaa941439b1ce485, type: 3}
   glowSprite: {fileID: 21300000, guid: 5d4256254e82c104d983b82f876bde16, type: 3}
   softDotSprite: {fileID: 21300000, guid: 035a7a5e9ba37654ea4625b94ed9bd0b, type: 3}
@@ -78,6 +98,8 @@ MonoBehaviour:
   scanlineSprite: {fileID: 21300000, guid: da8528b512de4a24fb15e5fd0521f3b1, type: 3}
   nebulaSprite: {fileID: 21300000, guid: 86eca7b090ba7cf4284270a5971257e7, type: 3}
   ringSprite: {fileID: 21300000, guid: a60018d44c38df1489a073e5314ef2fb, type: 3}
+  rocketLoadingSprite: {fileID: 21300000, guid: af1e772fb141b424ba3d1b4e0232cc92, type: 3}
+  flameLoadingSprite: {fileID: 21300000, guid: 2eade16e4677518469e7d94b1d3968f7, type: 3}
   logoRimSprite: {fileID: 0}
   iconPlay: {fileID: 21300000, guid: 522e17f335e4c874ab7f84385820927c, type: 3}
   iconPause: {fileID: 21300000, guid: 9c70637969b2d594f80e64c86a609d37, type: 3}
@@ -101,5 +123,5 @@ MonoBehaviour:
   crashClip: {fileID: 8300000, guid: 831b8732e42cca347a77735f08280c3a, type: 3}
   menuMusic: {fileID: 8300000, guid: e3890d4978f871f47b6390ff2b9f98c1, type: 3}
   masterGroup: {fileID: 24300002, guid: 884554bb606b959468dfbcb4cc2ead83, type: 2}
-  musicGroup: {fileID: -2351287443323038887, guid: 884554bb606b959468dfbcb4cc2ead83, type: 2}
-  sfxGroup: {fileID: -7800908032509910449, guid: 884554bb606b959468dfbcb4cc2ead83, type: 2}
+  musicGroup: {fileID: -5508107104519156360, guid: 884554bb606b959468dfbcb4cc2ead83, type: 2}
+  sfxGroup: {fileID: -1289524159578054425, guid: 884554bb606b959468dfbcb4cc2ead83, type: 2}

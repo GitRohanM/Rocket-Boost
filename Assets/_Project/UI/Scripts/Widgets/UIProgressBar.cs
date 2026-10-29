@@ -15,7 +15,10 @@ namespace RocketBoost.UI
         public void Set(float normalized, bool instant = false)
         {
             target = Mathf.Clamp01(normalized);
-            if (instant)
+
+            // Completion snaps: the percent label flips to 100 instantly, so an eased
+            // trailing fill would briefly contradict it.
+            if (instant || Mathf.Approximately(target, 1f))
             {
                 current = target;
                 Apply();

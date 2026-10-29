@@ -49,67 +49,72 @@ namespace RocketBoost.UI.Editor
             MainMenuScreen screen = Create<MainMenuScreen>("MainMenuScreen", UIScreenType.MainMenu, theme, backdrop: true, gameplay: false);
             RectTransform content = ContentOf(screen);
 
-            RectTransform column = NewRect("LeftColumn", content);
-            Place(column, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(110f, 30f), new Vector2(780f, 860f));
+            RectTransform column = NewRect("MenuColumn", content);
+            Place(column, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 26f), new Vector2(1180f, 940f));
             ResponsiveRect responsive = column.gameObject.AddComponent<ResponsiveRect>();
             SetResponsive(responsive,
                 new ResponsiveRect.Layout
                 {
-                    anchorMin = new Vector2(0f, 0.5f), anchorMax = new Vector2(0f, 0.5f), pivot = new Vector2(0f, 0.5f),
-                    anchoredPosition = new Vector2(110f, 30f), sizeDelta = new Vector2(780f, 860f)
+                    anchorMin = new Vector2(0.5f, 0.5f), anchorMax = new Vector2(0.5f, 0.5f), pivot = new Vector2(0.5f, 0.5f),
+                    anchoredPosition = new Vector2(0f, 26f), sizeDelta = new Vector2(1180f, 940f)
                 },
                 new ResponsiveRect.Layout
                 {
                     anchorMin = new Vector2(0.5f, 0.5f), anchorMax = new Vector2(0.5f, 0.5f), pivot = new Vector2(0.5f, 0.5f),
-                    anchoredPosition = new Vector2(0f, 40f), sizeDelta = new Vector2(960f, 900f)
+                    anchoredPosition = new Vector2(0f, 90f), sizeDelta = new Vector2(1000f, 1020f)
                 });
 
+            // ---- logo lockup, centred across the top like a title card
             RectTransform logo = NewRect("LogoGroup", column);
-            Place(logo, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 0f), new Vector2(780f, 360f));
+            Place(logo, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), Vector2.zero, new Vector2(1180f, 372f));
             logo.gameObject.AddComponent<UIFloat>();
             UIBuildUtil.Set(screen, "logoGroup", logo);
 
             RectTransform logoGlow = NewRect("LogoGlow", logo);
-            Place(logoGlow, new Vector2(0f, 1f), new Vector2(0.5f, 0.5f), new Vector2(250f, -150f), new Vector2(620f, 620f));
-            Image glowImage = UIBuildUtil.AddImage(logoGlow, theme.glowSprite, UITheme.Alpha(theme.primary, 0.16f));
+            Place(logoGlow, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 10f), new Vector2(900f, 520f));
+            UIBuildUtil.AddImage(logoGlow, theme.glowSprite, UITheme.Alpha(theme.primary, 0.13f));
             UIPulse pulse = logoGlow.gameObject.AddComponent<UIPulse>();
-            UIBuildUtil.Set(pulse, "minAlpha", 0.07f);
-            UIBuildUtil.Set(pulse, "maxAlpha", 0.2f);
+            UIBuildUtil.Set(pulse, "minAlpha", 0.06f);
+            UIBuildUtil.Set(pulse, "maxAlpha", 0.16f);
             UIBuildUtil.Set(pulse, "speed", 1.1f);
-            _ = glowImage;
 
-            TextMeshProUGUI eyebrow = Label(logo, "Eyebrow", "ORBITAL FLIGHT PROGRAM  //  ACTIVE", theme.bodyFont, 16f, theme.primary,
-                TextAlignmentOptions.TopLeft, new Vector2(6f, -6f), new Vector2(700f, 24f), 8f);
-
-            TextMeshProUGUI titleA = Label(logo, "TitleRocket", "ROCKET", theme.displayFont, 118f, theme.textPrimary,
-                TextAlignmentOptions.TopLeft, new Vector2(0f, -34f), new Vector2(720f, 132f), 4f);
-
-            TextMeshProUGUI titleB = Label(logo, "TitleBoost", "BOOST", theme.displayFont, 118f, theme.primary,
-                TextAlignmentOptions.TopLeft, new Vector2(0f, -158f), new Vector2(720f, 132f), 4f);
+            TextMeshProUGUI titleA = CenteredLabel(logo, "TitleRocket", "ROCKET", theme.displayFont, 112f, theme.textPrimary, 18f,
+                new Vector2(1180f, 128f), 6f);
+            TextMeshProUGUI titleB = CenteredLabel(logo, "TitleBoost", "BOOST", theme.displayFont, 112f, theme.primary, 138f,
+                new Vector2(1180f, 128f), 12f);
 
             RectTransform accent = NewRect("AccentRule", logo);
-            Place(accent, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(8f, -300f), new Vector2(148f, 3f));
-            UIBuildUtil.AddImage(accent, theme.glowSprite, theme.primary);
+            Place(accent, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -278f), new Vector2(280f, 4f));
+            UIBuildUtil.AddImage(accent, theme.selectionStreakSprite, theme.primary, sliced: true);
 
-            TextMeshProUGUI subtitle = Label(logo, "Subtitle", "THREE SECTORS.  ONE PERFECT LANDING.", theme.bodyFont, 21f, theme.textSecondary,
-                TextAlignmentOptions.TopLeft, new Vector2(8f, -316f), new Vector2(720f, 30f), 4f);
+            TextMeshProUGUI subtitle = CenteredLabel(logo, "Subtitle", "THREE SECTORS.  ONE PERFECT LANDING.", theme.bodyFont, 21f,
+                theme.textSecondary, 296f, new Vector2(1180f, 32f), 5f);
+
+            // ---- the list itself
+            TextMeshProUGUI listEyebrow = CenteredLabel(column, "MenuEyebrow", "-  MENU  -", theme.bodyFont,
+                theme.menuEyebrowSize, theme.primary, 400f, new Vector2(600f, 26f), 9f);
 
             RectTransform menu = NewRect("MenuGroup", column);
-            Place(menu, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, -410f), new Vector2(780f, 340f));
+            Place(menu, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -438f),
+                new Vector2(theme.menuListWidth, theme.menuListSpacing * 4f));
             CanvasGroup menuGroup = menu.gameObject.AddComponent<CanvasGroup>();
             UIBuildUtil.Set(screen, "menuGroup", menuGroup);
 
-            ThemedButton play = Button(menu, "PlayButton", "PLAY", theme, UIButtonVariant.Primary, theme.iconPlay,
-                new Vector2(0f, 0f), new Vector2(420f, 74f), 26f);
-            ThemedButton levelSelect = Button(menu, "LevelSelectButton", "LEVEL SELECT", theme, UIButtonVariant.Default, null,
-                new Vector2(0f, -88f), new Vector2(420f, 66f));
-            ThemedButton settings = Button(menu, "SettingsButton", "SETTINGS", theme, UIButtonVariant.Ghost, null,
-                new Vector2(0f, -168f), new Vector2(420f, 66f));
-            ThemedButton quit = Button(menu, "QuitButton", "QUIT", theme, UIButtonVariant.Ghost, null,
-                new Vector2(0f, -248f), new Vector2(420f, 60f));
+            ThemedButton play = ListRow(menu, theme, "PlayButton", "PLAY", "Launch the first sector of the campaign.", 0, 4);
+            ThemedButton levelSelect = ListRow(menu, theme, "LevelSelectButton", "LEVEL SELECT", "Jump straight to any unlocked sector.", 1, 4);
+            ThemedButton settings = ListRow(menu, theme, "SettingsButton", "SETTINGS", "Tune audio, display and the control guide.", 2, 4);
+            ThemedButton quit = ListRow(menu, theme, "QuitButton", "QUIT", "Close Rocket Boost and return to desktop.", 3, 4);
+
+            TextMeshProUGUI hint = CenteredLabel(column, "HintLabel", "Launch the first sector of the campaign.",
+                theme.bodyFont, theme.menuHintSize, theme.textSecondary, 764f, new Vector2(900f, 30f), 2f);
+            MenuHint caption = screen.gameObject.AddComponent<MenuHint>();
+            UIBuildUtil.Set(caption, "label", hint);
+            UIBuildUtil.Set(caption, "fadeDuration", theme.durationFast);
+
+            PromptStrip(content, theme, ("A", "CONFIRM"), ("B", "BACK"));
 
             TextMeshProUGUI version = Label(content, "VersionLabel", "BUILD 1.0", theme.bodyFont, 13f, theme.textMuted,
-                TextAlignmentOptions.BottomLeft, new Vector2(110f, 34f), new Vector2(600f, 22f), 4f);
+                TextAlignmentOptions.BottomLeft, new Vector2(48f, 96f), new Vector2(600f, 22f), 4f);
             // Pinned to the screen corner instead of the column so narrow aspects (portrait)
             // never drop it on top of the stacked menu buttons.
             version.rectTransform.anchorMin = Vector2.zero;
@@ -124,7 +129,7 @@ namespace RocketBoost.UI.Editor
             UIBuildUtil.Set(screen, "subtitleLabel", subtitle);
             UIBuildUtil.Set(screen, "defaultSelection", play.Button);
 
-            _ = eyebrow;
+            _ = listEyebrow;
             _ = titleA;
             _ = titleB;
 
@@ -162,7 +167,7 @@ namespace RocketBoost.UI.Editor
             grid.anchorMin = new Vector2(0f, 0f);
             grid.anchorMax = new Vector2(1f, 1f);
             grid.pivot = new Vector2(0.5f, 0.5f);
-            grid.offsetMin = new Vector2(96f, 100f);
+            grid.offsetMin = new Vector2(96f, 116f);
             grid.offsetMax = new Vector2(-96f, -206f);
 
             GridLayoutGroup layout = grid.gameObject.AddComponent<GridLayoutGroup>();
@@ -170,7 +175,7 @@ namespace RocketBoost.UI.Editor
             layout.spacing = new Vector2(30f, 28f);
             layout.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
             layout.constraintCount = 3;
-            layout.childAlignment = TextAnchor.UpperCenter;
+            layout.childAlignment = TextAnchor.MiddleCenter;
             layout.padding = new RectOffset(0, 0, 8, 0);
 
             ResponsiveGrid responsive = grid.gameObject.AddComponent<ResponsiveGrid>();
@@ -181,6 +186,7 @@ namespace RocketBoost.UI.Editor
             UIBuildUtil.Set(responsive, "portraitColumns", 1);
 
             LevelCard cardPrefab = cachedLevelCard != null ? cachedLevelCard : LoadLevelCard();
+            PromptStrip(content, theme, ("A", "LAUNCH"), ("B", "BACK"));
             UIBuildUtil.Set(screen, "backButton", back);
             UIBuildUtil.Set(screen, "cardContainer", grid);
             UIBuildUtil.Set(screen, "cardPrefab", cardPrefab);
@@ -258,6 +264,9 @@ namespace RocketBoost.UI.Editor
 
             TextMeshProUGUI best = Label(root, "BestTime", "NO RECORD", theme.bodyFont, 16f, theme.textMuted,
                 TextAlignmentOptions.BottomLeft, new Vector2(30f, 28f), new Vector2(300f, 26f), 2f);
+            best.rectTransform.anchorMin = Vector2.zero;
+            best.rectTransform.anchorMax = Vector2.zero;
+            best.rectTransform.pivot = Vector2.zero;
 
             RectTransform lockOverlay = NewRect("LockOverlay", root);
             UIBuildUtil.Stretch(lockOverlay, 1f, 1f, 1f, 1f);
@@ -407,7 +416,6 @@ namespace RocketBoost.UI.Editor
             UIBuildUtil.Set(screen, "topBar", topBar);
             UIBuildUtil.Set(screen, "bottomBar", bottomBar);
             UIBuildUtil.Set(screen, "hintGroup", hintGroup);
-            UIBuildUtil.Set(screen, "defaultSelection", pause.Button);
 
             return SaveScreen(screen, "HudScreen");
         }
@@ -420,39 +428,44 @@ namespace RocketBoost.UI.Editor
             RectTransform content = ContentOf(screen);
             Scrim(content, 0.72f);
 
+            // Boxless: the scrim carries the dimming, so the panel is only a transform to pop.
             RectTransform panel = NewRect("Panel", content);
-            Place(panel, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(640f, 600f));
-            UIBuildUtil.AddImage(panel, theme.panelSprite, Color.white, sliced: true, raycast: true);
+            Place(panel, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(900f, 780f));
 
             RectTransform accent = NewRect("Accent", panel);
-            Place(accent, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 272f), new Vector2(120f, 3f));
-            UIBuildUtil.AddImage(accent, theme.glowSprite, theme.primary);
+            Place(accent, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 322f), new Vector2(320f, 8f));
+            UIBuildUtil.AddImage(accent, theme.selectionStreakSprite, theme.primary, sliced: true);
 
-            Label(panel, "Title", "PAUSED", theme.displayFont, 50f, theme.textPrimary,
-                TextAlignmentOptions.Center, new Vector2(0f, 210f), new Vector2(560f, 64f), 8f, true);
+            Label(panel, "Title", "PAUSED", theme.displayFont, 62f, theme.textPrimary,
+                TextAlignmentOptions.Center, new Vector2(0f, 254f), new Vector2(700f, 76f), 14f, true);
 
-            TextMeshProUGUI sector = Label(panel, "Sector", "SECTOR 01", theme.bodyFont, 16f, theme.primary,
-                TextAlignmentOptions.Center, new Vector2(0f, 156f), new Vector2(560f, 26f), 5f, true);
+            TextMeshProUGUI sector = Label(panel, "Sector", "SECTOR 01", theme.bodyFont, 17f, theme.primary,
+                TextAlignmentOptions.Center, new Vector2(0f, 196f), new Vector2(700f, 26f), 6f, true);
 
             TextMeshProUGUI time = Label(panel, "Time", "MISSION TIME  00:00.00", theme.bodyFont, 16f, theme.textSecondary,
-                TextAlignmentOptions.Center, new Vector2(0f, 122f), new Vector2(560f, 26f), 3f, true);
+                TextAlignmentOptions.Center, new Vector2(0f, 164f), new Vector2(700f, 26f), 3f, true);
 
-            ThemedButton resume = Button(panel, "ResumeButton", "RESUME", theme, UIButtonVariant.Primary, theme.iconPlay,
-                new Vector2(0f, 34f), new Vector2(440f, 62f));
-            ThemedButton restart = Button(panel, "RestartButton", "RESTART", theme, UIButtonVariant.Default, theme.iconRestart,
-                new Vector2(0f, -42f), new Vector2(440f, 60f));
-            ThemedButton settings = Button(panel, "SettingsButton", "SETTINGS", theme, UIButtonVariant.Ghost, theme.iconSettings,
-                new Vector2(0f, -118f), new Vector2(440f, 60f));
-            ThemedButton menu = Button(panel, "MainMenuButton", "MAIN MENU", theme, UIButtonVariant.Ghost, theme.iconHome,
-                new Vector2(0f, -194f), new Vector2(440f, 60f));
+            RectTransform list = NewRect("MenuGroup", panel);
+            Place(list, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, -46f),
+                new Vector2(theme.menuListWidth, theme.menuListSpacing * 4f));
 
-            Label(panel, "Footer", "ESC TO RESUME", theme.bodyFont, 12f, theme.textMuted,
-                TextAlignmentOptions.Center, new Vector2(0f, -260f), new Vector2(560f, 22f), 7f, true);
+            ThemedButton resume = ListRow(list, theme, "ResumeButton", "RESUME", "Return to the flight.", 0, 4);
+            ThemedButton restart = ListRow(list, theme, "RestartButton", "RESTART", "Fly the sector again from the start.", 1, 4);
+            ThemedButton settings = ListRow(list, theme, "SettingsButton", "SETTINGS", "Tune audio, display and the control guide.", 2, 4);
+            ThemedButton mainMenu = ListRow(list, theme, "MainMenuButton", "MAIN MENU", "Abandon the run and return to the menu.", 3, 4);
+
+            TextMeshProUGUI hint = Label(panel, "HintLabel", "Return to the flight.", theme.bodyFont, theme.menuHintSize,
+                theme.textSecondary, TextAlignmentOptions.Center, new Vector2(0f, -272f), new Vector2(860f, 28f), 2f, true);
+            MenuHint caption = screen.gameObject.AddComponent<MenuHint>();
+            UIBuildUtil.Set(caption, "label", hint);
+            UIBuildUtil.Set(caption, "fadeDuration", theme.durationFast);
+
+            PromptStrip(content, theme, ("A", "CONFIRM"), ("B", "RESUME"));
 
             UIBuildUtil.Set(screen, "resumeButton", resume);
             UIBuildUtil.Set(screen, "restartButton", restart);
             UIBuildUtil.Set(screen, "settingsButton", settings);
-            UIBuildUtil.Set(screen, "mainMenuButton", menu);
+            UIBuildUtil.Set(screen, "mainMenuButton", mainMenu);
             UIBuildUtil.Set(screen, "sectorLabel", sector);
             UIBuildUtil.Set(screen, "timeLabel", time);
             UIBuildUtil.Set(screen, "panel", panel);
@@ -476,7 +489,7 @@ namespace RocketBoost.UI.Editor
             UIBuildUtil.Set(confettiEffect, "shapes", new[] { theme.starSmallSprite, theme.softDotSprite, theme.starSprite });
 
             RectTransform panel = NewRect("Panel", content);
-            Place(panel, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(1000f, 760f));
+            Place(panel, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(1000f, 820f));
             UIBuildUtil.AddImage(panel, theme.panelSprite, Color.white, sliced: true, raycast: true);
 
             UIBuildUtil.Set(screen, "confetti", confettiEffect);
@@ -526,15 +539,18 @@ namespace RocketBoost.UI.Editor
                 TextAlignmentOptions.Center, Vector2.zero, new Vector2(190f, 40f), 4f, true);
             badge.gameObject.SetActive(false);
 
-            ThemedButton next = Button(panel, "NextButton", "NEXT SECTOR", theme, UIButtonVariant.Primary, theme.iconChevronRight,
-                new Vector2(-220f, -210f), new Vector2(320f, 64f));
-            ThemedButton retry = Button(panel, "RetryButton", "RETRY", theme, UIButtonVariant.Default, theme.iconRestart,
-                new Vector2(60f, -210f), new Vector2(200f, 64f));
-            ThemedButton menu = Button(panel, "MenuButton", "MENU", theme, UIButtonVariant.Ghost, theme.iconHome,
-                new Vector2(280f, -210f), new Vector2(200f, 64f));
+            RectTransform list = NewRect("MenuGroup", panel);
+            Place(list, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, -232f),
+                new Vector2(theme.menuListWidth, theme.menuListSpacing * 3f));
+
+            ThemedButton next = ListRow(list, theme, "NextButton", "NEXT SECTOR", "Continue to the next sector.", 0, 3);
+            ThemedButton retry = ListRow(list, theme, "RetryButton", "RETRY", "Fly this sector again for a better rank.", 1, 3);
+            ThemedButton menu = ListRow(list, theme, "MenuButton", "MAIN MENU", "Leave the debrief and return to the menu.", 2, 3);
 
             TextMeshProUGUI hint = Label(panel, "NextHint", "Continue to the next sector when ready.", theme.bodyFont, 15f, theme.textMuted,
-                TextAlignmentOptions.Center, new Vector2(0f, -292f), new Vector2(820f, 26f), 2f, true);
+                TextAlignmentOptions.Center, new Vector2(0f, -374f), new Vector2(820f, 26f), 2f, true);
+
+            PromptStrip(content, theme, ("A", "CONFIRM"));
 
             UIBuildUtil.Set(screen, "titleLabel", title);
             UIBuildUtil.Set(screen, "sectorLabel", null);
@@ -595,13 +611,17 @@ namespace RocketBoost.UI.Editor
             TextMeshProUGUI attempts = Label(panel, "Attempts", "ATTEMPT  1", theme.bodyFont, 15f, theme.textMuted,
                 TextAlignmentOptions.Center, new Vector2(0f, 28f), new Vector2(760f, 24f), 5f, true);
 
-            ThemedButton retry = Button(panel, "RetryButton", "RETRY", theme, UIButtonVariant.Primary, theme.iconRestart,
-                new Vector2(0f, -56f), new Vector2(360f, 68f), 24f);
-            ThemedButton menu = Button(panel, "MenuButton", "MAIN MENU", theme, UIButtonVariant.Ghost, theme.iconHome,
-                new Vector2(0f, -138f), new Vector2(360f, 58f));
+            RectTransform list = NewRect("MenuGroup", panel);
+            Place(list, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, -104f),
+                new Vector2(theme.menuListWidth, theme.menuListSpacing * 2f));
+
+            ThemedButton retry = ListRow(list, theme, "RetryButton", "RETRY", "Launch the sector again immediately.", 0, 2);
+            ThemedButton menu = ListRow(list, theme, "MenuButton", "MAIN MENU", "Return to the menu and pick another sector.", 1, 2);
 
             TextMeshProUGUI hint = Label(panel, "RetryHint", "PRESS ESC OR RETRY", theme.bodyFont, 12f, theme.textMuted,
-                TextAlignmentOptions.Center, new Vector2(0f, -220f), new Vector2(700f, 22f), 6f, true);
+                TextAlignmentOptions.Center, new Vector2(0f, -216f), new Vector2(700f, 22f), 6f, true);
+
+            PromptStrip(content, theme, ("A", "CONFIRM"), ("B", "RETRY"));
 
             UIBuildUtil.Set(screen, "titleLabel", title);
             UIBuildUtil.Set(screen, "reasonLabel", reason);
@@ -690,25 +710,48 @@ namespace RocketBoost.UI.Editor
             Place(controls, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(64f, -466f), new Vector2(992f, 250f));
             UIBuildUtil.AddImage(controls, theme.panelDeepSprite, UITheme.Alpha(theme.backgroundDeep, 0.65f), sliced: true);
 
+            // One grid: action, keyboard, gamepad. Every row shares the same rhythm, so the caps
+            // line up in two clean columns instead of floating at hand-placed offsets.
+            const float ActionColumn = 24f;
+            const float KeyboardColumn = 250f;
+            const float GamepadColumn = 616f;
+            const float ColumnWidth = 342f;
+            const float TableWidth = 944f;
+            float firstRow = 44f;
+            float rowStep = theme.keyCapRowHeight;
+
+            Label(controls, "ActionHeader", "ACTION", theme.bodyFont, 11f, theme.textMuted,
+                TextAlignmentOptions.MidlineLeft, new Vector2(ActionColumn, -8f), new Vector2(180f, 22f), 6f);
             Label(controls, "KeyboardHeader", "KEYBOARD", theme.bodyFont, 11f, theme.textMuted,
-                TextAlignmentOptions.MidlineLeft, new Vector2(250f, -8f), new Vector2(150f, 22f), 5f);
+                TextAlignmentOptions.MidlineLeft, new Vector2(KeyboardColumn, -8f), new Vector2(ColumnWidth, 22f), 6f);
             Label(controls, "GamepadHeader", "GAMEPAD", theme.bodyFont, 11f, theme.textMuted,
-                TextAlignmentOptions.MidlineLeft, new Vector2(540f, -8f), new Vector2(150f, 22f), 5f);
+                TextAlignmentOptions.MidlineLeft, new Vector2(GamepadColumn, -8f), new Vector2(ColumnWidth, 22f), 6f);
 
-            KeyRow(controls, theme, "THRUST", 44f);
-            KeyRow(controls, theme, "ROTATE", 94f);
-            KeyRow(controls, theme, "PAUSE", 144f);
-            KeyRow(controls, theme, "NAVIGATE", 194f);
+            TableRule(controls, theme, "HeaderRule", 34f, TableWidth, theme.borderDim);
 
-            KeyCap(controls, theme, "SPACE", new Vector2(250f, -44f), 150f);
-            KeyCap(controls, theme, "A  /  D", new Vector2(250f, -94f), 150f);
-            KeyCap(controls, theme, "ESC", new Vector2(250f, -144f), 150f);
-            KeyCap(controls, theme, "ARROWS  /  D-PAD", new Vector2(250f, -194f), 230f);
+            KeyRow(controls, theme, "THRUST", ActionColumn, firstRow);
+            KeyCaps(controls, theme, KeyboardColumn, firstRow, "SPACE");
+            KeyCaps(controls, theme, GamepadColumn, firstRow, "RT");
 
-            KeyCap(controls, theme, "RT", new Vector2(540f, -44f), 150f);
-            KeyCap(controls, theme, "LEFT STICK", new Vector2(540f, -94f), 150f);
-            KeyCap(controls, theme, "START", new Vector2(540f, -144f), 150f);
-            KeyCap(controls, theme, "D-PAD", new Vector2(540f, -194f), 150f);
+            KeyRow(controls, theme, "ROTATE", ActionColumn, firstRow + rowStep);
+            KeyCaps(controls, theme, KeyboardColumn, firstRow + rowStep, "A", "D");
+            KeyCaps(controls, theme, GamepadColumn, firstRow + rowStep, "LEFT STICK");
+
+            KeyRow(controls, theme, "PAUSE", ActionColumn, firstRow + rowStep * 2f);
+            KeyCaps(controls, theme, KeyboardColumn, firstRow + rowStep * 2f, "ESC");
+            KeyCaps(controls, theme, GamepadColumn, firstRow + rowStep * 2f, "START");
+
+            KeyRow(controls, theme, "NAVIGATE", ActionColumn, firstRow + rowStep * 3f);
+            KeyCaps(controls, theme, KeyboardColumn, firstRow + rowStep * 3f, "ARROWS");
+            KeyCaps(controls, theme, GamepadColumn, firstRow + rowStep * 3f, "D-PAD");
+
+            for (int i = 1; i < 4; i++)
+            {
+                TableRule(controls, theme, $"RowRule{i}",
+                    firstRow + rowStep * i - (rowStep - theme.keyCapHeight) * 0.5f, TableWidth, UITheme.Alpha(theme.borderDim, 0.5f));
+            }
+
+            PromptStrip(content, theme, ("A", "ADJUST"), ("B", "CLOSE"));
 
             Label(panel, "Footer", "SETTINGS SAVE AUTOMATICALLY WHEN YOU CLOSE THIS PANEL", theme.bodyFont, 11f, theme.textMuted,
                 TextAlignmentOptions.Center, new Vector2(0f, -770f), new Vector2(1000f, 22f), 5f, true);
@@ -745,10 +788,54 @@ namespace RocketBoost.UI.Editor
             Place(glow, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 40f), new Vector2(1200f, 1200f));
             UIBuildUtil.AddImage(glow, theme.glowSprite, UITheme.Alpha(theme.primary, 0.08f));
 
-            RectTransform ring = NewRect("Ring", content);
-            Place(ring, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 150f), new Vector2(150f, 150f));
-            UIBuildUtil.AddImage(ring, theme.ringSprite, UITheme.Alpha(theme.primary, 0.55f));
-            ring.gameObject.AddComponent<UIRotate>();
+            RectTransform emblem = NewRect("RocketEmblem", content);
+            Place(emblem, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 205f), new Vector2(260f, 340f));
+
+            RectTransform halo = NewRect("Halo", emblem);
+            Place(halo, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 12f), new Vector2(370f, 370f));
+            UIBuildUtil.AddImage(halo, theme.glowSprite, UITheme.Alpha(theme.primary, 0.16f));
+            UIPulse haloPulse = halo.gameObject.AddComponent<UIPulse>();
+            UIBuildUtil.Set(haloPulse, "minAlpha", 0.08f);
+            UIBuildUtil.Set(haloPulse, "maxAlpha", 0.18f);
+            UIBuildUtil.Set(haloPulse, "speed", 1f);
+
+            // The flame's widest point sits just below the nozzle bell, so the plume reads as
+            // attached rather than floating; the rocket is drawn last and overlaps its tip.
+            RectTransform exhaust = NewRect("ExhaustGlow", emblem);
+            Place(exhaust, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, -70f), new Vector2(170f, 170f));
+            UIBuildUtil.AddImage(exhaust, theme.glowSprite, UITheme.Alpha(theme.secondary, 0.22f));
+            UIPulse exhaustPulse = exhaust.gameObject.AddComponent<UIPulse>();
+            UIBuildUtil.Set(exhaustPulse, "minAlpha", 0.12f);
+            UIBuildUtil.Set(exhaustPulse, "maxAlpha", 0.26f);
+            UIBuildUtil.Set(exhaustPulse, "speed", 5f);
+
+            RectTransform flame = NewRect("Flame", emblem);
+            Place(flame, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, -84f), new Vector2(78f, 117f));
+            Image flameImage = UIBuildUtil.AddImage(flame, theme.flameLoadingSprite, UITheme.Alpha(theme.secondary, 0.95f));
+            flameImage.preserveAspect = true;
+            UIPulse flamePulse = flame.gameObject.AddComponent<UIPulse>();
+            UIBuildUtil.Set(flamePulse, "minAlpha", 0.55f);
+            UIBuildUtil.Set(flamePulse, "maxAlpha", 0.95f);
+            UIBuildUtil.Set(flamePulse, "speed", 7f);
+
+            RectTransform flameCore = NewRect("Core", flame);
+            Place(flameCore, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 6f), new Vector2(40f, 60f));
+            Color hot = Color.Lerp(theme.secondary, Color.white, 0.62f);
+            Image flameCoreImage = UIBuildUtil.AddImage(flameCore, theme.flameLoadingSprite, UITheme.Alpha(hot, 0.95f));
+            flameCoreImage.preserveAspect = true;
+            UIPulse corePulse = flameCore.gameObject.AddComponent<UIPulse>();
+            UIBuildUtil.Set(corePulse, "minAlpha", 0.6f);
+            UIBuildUtil.Set(corePulse, "maxAlpha", 1f);
+            UIBuildUtil.Set(corePulse, "speed", 9f);
+
+            RectTransform rocket = NewRect("Rocket", emblem);
+            Place(rocket, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 12f), new Vector2(170f, 255f));
+            Image rocketImage = UIBuildUtil.AddImage(rocket, theme.rocketLoadingSprite, theme.primary);
+            rocketImage.preserveAspect = true;
+
+            UIFloat bobbing = emblem.gameObject.AddComponent<UIFloat>();
+            UIBuildUtil.Set(bobbing, "amplitude", 6f);
+            UIBuildUtil.Set(bobbing, "speed", 0.8f);
 
             Label(content, "Eyebrow", "ROCKET  BOOST", theme.bodyFont, 14f, theme.primary,
                 TextAlignmentOptions.Center, new Vector2(0f, 40f), new Vector2(600f, 22f), 10f, true);
@@ -994,6 +1081,43 @@ namespace RocketBoost.UI.Editor
             return go.GetComponent<ThemedButton>();
         }
 
+        /// <summary>Label hung from the horizontal centre of its parent, <paramref name="y"/> pixels below its top.</summary>
+        private static TextMeshProUGUI CenteredLabel(
+            Transform parent,
+            string name,
+            string content,
+            TMP_FontAsset font,
+            float size,
+            Color color,
+            float y,
+            Vector2 rectSize,
+            float tracking = 0f)
+        {
+            RectTransform rect = NewRect(name, parent);
+            Place(rect, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -y), rectSize);
+            return UIBuildUtil.AddText(rect, content, font, size, color, TextAlignmentOptions.Center, tracking);
+        }
+
+        /// <summary>One row of a boxless centred menu list, stacked on the theme's list spacing.</summary>
+        private static ThemedButton ListRow(
+            Transform parent,
+            UITheme theme,
+            string name,
+            string text,
+            string hint,
+            int index,
+            int rowCount)
+        {
+            float y = rowCount * theme.menuListSpacing * 0.5f - theme.menuListSpacing * (index + 0.5f);
+            return UIBuildUtil.BuildListButton(parent, name, text, theme, hint, new Vector2(0f, y))
+                .GetComponent<ThemedButton>();
+        }
+
+        private static void PromptStrip(RectTransform content, UITheme theme, params PromptEntry[] entries)
+        {
+            UIBuildUtil.BuildPromptStrip(content, theme, 0f, entries);
+        }
+
         private static void Scrim(Transform parent, float alpha)
         {
             RectTransform scrim = NewRect("Scrim", parent);
@@ -1032,28 +1156,50 @@ namespace RocketBoost.UI.Editor
             Label(panel, $"{name}Label", label, theme.bodyFont, 13f, theme.textMuted,
                 TextAlignmentOptions.MidlineLeft, new Vector2(64f, y), new Vector2(120f, 26f), 5f);
 
-            GameObject sliderObject = UIBuildUtil.BuildSlider(panel, name, theme, Vector2.zero, 360f, 30f);
+            // The track stops short of the value column by more than the handle's half-width, so the
+            // knob can never sit on top of the percentage. The row is 44px tall to give the whole
+            // bar a comfortable click target while the visible track stays thin.
+            GameObject sliderObject = UIBuildUtil.BuildSlider(panel, name, theme, Vector2.zero, 274f, 44f);
             RectTransform sliderRect = (RectTransform)sliderObject.transform;
             sliderRect.anchorMin = new Vector2(0f, 1f);
             sliderRect.anchorMax = new Vector2(0f, 1f);
             sliderRect.pivot = new Vector2(0f, 0.5f);
-            sliderRect.anchoredPosition = new Vector2(190f, y);
+            sliderRect.anchoredPosition = new Vector2(196f, y);
 
             valueLabel = Label(panel, $"{name}Value", "80%", theme.bodyFont, 15f, theme.primary,
-                TextAlignmentOptions.MidlineRight, new Vector2(556f, y), new Vector2(80f, 26f), 2f);
+                TextAlignmentOptions.MidlineRight, new Vector2(556f, y), new Vector2(60f, 26f), 1f);
             valueLabel.rectTransform.anchorMin = new Vector2(0f, 1f);
             valueLabel.rectTransform.anchorMax = new Vector2(0f, 1f);
             valueLabel.rectTransform.pivot = new Vector2(1f, 0.5f);
             valueLabel.rectTransform.anchoredPosition = new Vector2(556f, y);
-            valueLabel.rectTransform.sizeDelta = new Vector2(80f, 26f);
+            valueLabel.rectTransform.sizeDelta = new Vector2(60f, 26f);
 
             return sliderObject.GetComponent<Slider>();
         }
 
-        private static void KeyRow(Transform parent, UITheme theme, string action, float y)
+        private static void KeyRow(Transform parent, UITheme theme, string action, float x, float y)
         {
             Label(parent, $"{action}Label", action, theme.bodyFont, 14f, theme.textSecondary,
-                TextAlignmentOptions.MidlineLeft, new Vector2(24f, -y), new Vector2(180f, 30f), 5f);
+                TextAlignmentOptions.MidlineLeft, new Vector2(x, -y), new Vector2(200f, theme.keyCapHeight), 5f);
+        }
+
+        /// <summary>Left-aligned key caps for one table cell; each chip is measured from its own label.</summary>
+        private static void KeyCaps(Transform parent, UITheme theme, float x, float y, params string[] keys)
+        {
+            float cursor = x;
+            foreach (string key in keys)
+            {
+                float width = Mathf.Max(theme.keyCapMinWidth, theme.keyCapPadding + key.Length * theme.keyCapCharWidth);
+                KeyCap(parent, theme, key, new Vector2(cursor, -y), width);
+                cursor += width + theme.keyCapGap;
+            }
+        }
+
+        private static void TableRule(Transform parent, UITheme theme, string name, float y, float width, Color color)
+        {
+            RectTransform rule = NewRect(name, parent);
+            Place(rule, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(24f, -y), new Vector2(width, 1f));
+            UIBuildUtil.AddImage(rule, null, color);
         }
 
         private static void KeyCap(Transform parent, UITheme theme, string text, Vector2 position, float width)
@@ -1063,12 +1209,12 @@ namespace RocketBoost.UI.Editor
             cap.anchorMax = new Vector2(0f, 1f);
             cap.pivot = new Vector2(0f, 1f);
             cap.anchoredPosition = position;
-            cap.sizeDelta = new Vector2(width, 34f);
+            cap.sizeDelta = new Vector2(width, theme.keyCapHeight);
             UIBuildUtil.AddImage(cap, theme.pillSprite, UITheme.Alpha(theme.surfaceRaised, 0.9f), sliced: true);
 
             RectTransform label = NewRect("Label", cap);
-            UIBuildUtil.Stretch(label, 8f, 8f, 0f, 0f);
-            UIBuildUtil.AddText(label, text, theme.bodyFont, 13f, theme.textPrimary, TextAlignmentOptions.Center, 3f);
+            UIBuildUtil.Stretch(label, 6f, 6f, 0f, 0f);
+            UIBuildUtil.AddText(label, text, theme.bodyFont, 13f, theme.textPrimary, TextAlignmentOptions.Center, 2f);
         }
 
         private static T SaveScreen<T>(T screen, string fileName) where T : UIScreen

@@ -12,7 +12,10 @@ namespace RocketBoost.UI
         Default,
         Primary,
         Ghost,
-        Danger
+        Danger,
+
+        /// <summary>Boxless centred text row: only the label, its glow streak and a scale change read as focus.</summary>
+        List
     }
 
     /// <summary>
@@ -30,8 +33,10 @@ namespace RocketBoost.UI
         [SerializeField] private TMP_Text label;
         [SerializeField] private Image focusRing;
         [SerializeField] private Image border;
+        [SerializeField] private Image selectionBar;
         [SerializeField] private UIButtonVariant variant = UIButtonVariant.Default;
         [SerializeField] private bool playClickSound = true;
+        [SerializeField, TextArea] private string hintText;
 
         private UITheme theme;
         private Color backgroundColor;
@@ -42,10 +47,14 @@ namespace RocketBoost.UI
         private bool selected;
         private bool pressed;
         private Coroutine scaleRoutine;
+        private Coroutine barRoutine;
         private bool applied;
 
         public Button Button => button;
         public TMP_Text Label => label;
+
+        /// <summary>Description shown by <see cref="MenuHint"/> while this row holds focus.</summary>
+        public string HintText => hintText;
 
         private void Awake()
         {
@@ -72,7 +81,9 @@ namespace RocketBoost.UI
         {
             pressed = false;
             hovered = false;
-            selected = false;
+            // The EventSystem may already point at this button when a screen is shown, in which case
+            // it never re-sends OnSelect, so read the real selection instead of assuming none.
+            selected = EventSystem.current != null && EventSystem.current.currentSelectedGameObject == gameObject;
             Refresh(true);
         }
 
@@ -89,10 +100,14 @@ namespace RocketBoost.UI
 
             if (label != null)
             {
-                label.font = uiTheme.bodyFont;
-                label.fontSize = uiTheme.labelSize;
+                bool list = variant == UIButtonVariant.List;
+                label.font = list ? uiTheme.displayFont : uiTheme.bodyFont;
                 label.fontStyle = FontStyles.Bold;
-                label.characterSpacing = 2f;
+                label.characterSpacing = list ? uiTheme.menuListTracking : 2f;
+                if (list)
+                {
+                    label.fontSize = uiTheme.menuListSize;
+                }
             }
 
             if (button != null)
@@ -134,6 +149,12 @@ namespace RocketBoost.UI
                     backgroundColor = UITheme.Alpha(theme.danger, 0.9f);
                     labelColor = Color.white;
                     iconColor = Color.white;
+                    break;
+                case UIButtonVariant.List:
+                    // Nothing is painted behind the label: the row is pure text plus its streak.
+                    backgroundColor = Color.clear;
+                    labelColor = theme.textPrimary;
+                    iconColor = theme.primary;
                     break;
                 default:
                     backgroundColor = theme.surfaceRaised;
@@ -185,6 +206,7 @@ namespace RocketBoost.UI
 
             bool interactable = button != null && button.interactable;
             bool highlight = interactable && (hovered || selected);
+            bool focused = interactable && selected;
 
             if (background != null)
             {
@@ -209,6 +231,14 @@ namespace RocketBoost.UI
             {
                 foreground = theme.backgroundDeep;
             }
+            else if (variant == UIButtonVariant.List)
+            {
+                // Three tiers: the focused row is cyan, a merely hovered row only whitens, idle rows stay dim.
+                foreground = !interactable ? UITheme.Alpha(labelColor, 0.35f)
+                    : focused ? theme.primary
+                    : hovered ? labelColor
+                    : UITheme.Alpha(labelColor, 0.62f);
+            }
 
             if (label != null)
             {
@@ -223,16 +253,40 @@ namespace RocketBoost.UI
 
             if (border != null)
             {
-                border.color = ResolveBorderColor(interactable, highlight);
+                border.color = variant == UIButtonVariant.List
+                    ? Color.clear
+                    : ResolveBorderColor(interactable, highlight);
             }
 
             if (focusRing != null)
             {
-                focusRing.color = UITheme.Alpha(theme.primary, selected ? 0.55f : 0f);
+                focusRing.color = variant == UIButtonVariant.List
+                    ? Color.clear
+                    : UITheme.Alpha(theme.primary, selected ? 0.55f : 0f);
             }
 
+            if (selectionBar != null)
+            {
+                // The streak is the focus marker; hovering must not light a second one.
+                bool lit = focused;
+                selectionBar.color = UITheme.Alpha(theme.primary, lit ? 0.92f : 0f);
+
+                Vector3 barTarget = new Vector3(lit ? 1f : 0.42f, 1f, 1f);
+                UITween.Stop(ref barRoutine);
+                if (instant)
+                {
+                    selectionBar.transform.localScale = barTarget;
+                }
+                else
+                {
+                    barRoutine = UITween.Scale(selectionBar.transform, barTarget, theme.durationFast, UIEase.OutCubic);
+                }
+            }
+
+            float focusScale = variant == UIButtonVariant.List ? theme.menuSelectedScale : theme.hoverScale;
+            bool elevated = variant == UIButtonVariant.List ? focused : highlight;
             Vector3 target = interactable && pressed ? baseScale * theme.pressScale
-                : interactable && highlight ? baseScale * theme.hoverScale
+                : elevated ? baseScale * focusScale
                 : baseScale;
 
             UITween.Stop(ref scaleRoutine);

@@ -184,6 +184,25 @@ namespace RocketBoost.UI.Editor
             theme.hoverScale = 1.035f;
             theme.pressScale = 0.965f;
             theme.stagger = 0.06f;
+            theme.menuListWidth = 680f;
+            theme.menuListHeight = 60f;
+            theme.menuListSpacing = 74f;
+            theme.menuListSize = 33f;
+            theme.menuListTracking = 6f;
+            theme.menuSelectedScale = 1.06f;
+            theme.menuEyebrowSize = 17f;
+            theme.menuHintSize = 20f;
+            theme.selectionBarWidth = 330f;
+            theme.selectionBarHeight = 16f;
+            theme.promptStripHeight = 76f;
+            theme.promptGlyphSize = 30f;
+            theme.promptLabelSize = 18f;
+            theme.keyCapHeight = 34f;
+            theme.keyCapRowHeight = 52f;
+            theme.keyCapMinWidth = 48f;
+            theme.keyCapPadding = 26f;
+            theme.keyCapCharWidth = 11f;
+            theme.keyCapGap = 10f;
 
             AssetDatabase.CreateAsset(theme, ThemePath);
             AssetDatabase.SaveAssets();
@@ -208,6 +227,7 @@ namespace RocketBoost.UI.Editor
             theme.gaugeTrackSprite = Load("gauge_track");
             theme.gaugeFillSprite = Load("gauge_fill");
             theme.sliderHandleSprite = Load("slider_handle");
+            theme.selectionStreakSprite = Load("menu_streak");
             theme.backgroundGradientSprite = Load("bg_gradient");
 
             theme.glowSprite = Load("glow");
@@ -219,6 +239,8 @@ namespace RocketBoost.UI.Editor
             theme.scanlineSprite = Load("scanlines");
             theme.nebulaSprite = Load("nebula");
             theme.ringSprite = Load("ring");
+            theme.rocketLoadingSprite = Load("rocket_loading");
+            theme.flameLoadingSprite = Load("flame_loading");
 
             theme.iconPlay = Load("icon_play");
             theme.iconPause = Load("icon_pause");

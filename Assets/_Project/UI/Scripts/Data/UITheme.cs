@@ -65,6 +65,29 @@ namespace RocketBoost.UI.Data
         public float pressScale = 0.965f;
         public float stagger = 0.06f;
 
+        [Header("Text List Menu")]
+        public float menuListWidth = 660f;
+        public float menuListHeight = 62f;
+        public float menuListSpacing = 72f;
+        public float menuListSize = 34f;
+        public float menuListTracking = 5f;
+        public float menuSelectedScale = 1.07f;
+        public float menuEyebrowSize = 17f;
+        public float menuHintSize = 20f;
+        public float selectionBarWidth = 300f;
+        public float selectionBarHeight = 14f;
+        public float promptStripHeight = 78f;
+        public float promptGlyphSize = 28f;
+        public float promptLabelSize = 18f;
+
+        [Header("Key Cap Table")]
+        public float keyCapHeight = 34f;
+        public float keyCapRowHeight = 52f;
+        public float keyCapMinWidth = 48f;
+        public float keyCapPadding = 26f;
+        public float keyCapCharWidth = 11f;
+        public float keyCapGap = 10f;
+
         [Header("Panels & Buttons")]
         public Sprite panelSprite;
         public Sprite panelDeepSprite;
@@ -79,6 +102,7 @@ namespace RocketBoost.UI.Data
         public Sprite gaugeTrackSprite;
         public Sprite gaugeFillSprite;
         public Sprite sliderHandleSprite;
+        public Sprite selectionStreakSprite;
         public Sprite backgroundGradientSprite;
 
         [Header("Decorations")]
@@ -91,6 +115,8 @@ namespace RocketBoost.UI.Data
         public Sprite scanlineSprite;
         public Sprite nebulaSprite;
         public Sprite ringSprite;
+        public Sprite rocketLoadingSprite;
+        public Sprite flameLoadingSprite;
         public Sprite logoRimSprite;
 
         [Header("Icons")]

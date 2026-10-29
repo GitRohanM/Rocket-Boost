@@ -18,6 +18,10 @@ namespace RocketBoost.UI.Editor
 
         private const int IconSize = 128;
         private const int PanelSize = 128;
+        private const int RocketWidth = 256;
+        private const int RocketHeight = 384;
+        private const int FlameWidth = 128;
+        private const int FlameHeight = 192;
 
         public static void GenerateAll(UITheme theme)
         {
@@ -49,6 +53,9 @@ namespace RocketBoost.UI.Editor
             WriteScanlines("scanlines");
             WriteNebula("nebula", 256);
             WriteRing("ring", 256);
+            WriteStreak("menu_streak", 256, 24);
+            WriteShape("rocket_loading", RocketWidth, RocketHeight, RocketSdf);
+            WriteShape("flame_loading", FlameWidth, FlameHeight, FlameSdf);
             WriteHandle("slider_handle", theme);
 
             WriteStar("star", 128, false);
@@ -433,6 +440,37 @@ namespace RocketBoost.UI.Editor
             Save(texture, name);
         }
 
+        /// <summary>
+        /// Selection streak for the highlighted row of the text-list menus: a bright core that
+        /// tapers to nothing at both ends, so it reads as a light sweep rather than a bar.
+        /// </summary>
+        private static void WriteStreak(string name, int width, int height)
+        {
+            Texture2D texture = NewTexture(width, height);
+            Color32[] pixels = new Color32[width * height];
+            float half = height * 0.5f;
+
+            for (int y = 0; y < height; y++)
+            {
+                float v = 1f - Mathf.Abs(y + 0.5f - half) / half;
+                float core = Mathf.Pow(Mathf.Clamp01(v), 5f);
+                float halo = Mathf.Pow(Mathf.Clamp01(v), 1.6f) * 0.45f;
+
+                for (int x = 0; x < width; x++)
+                {
+                    float u = x / (float)(width - 1);
+                    float taper = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(u / 0.22f))
+                        * Mathf.SmoothStep(0f, 1f, Mathf.Clamp01((1f - u) / 0.22f));
+
+                    pixels[y * width + x] = new Color(1f, 1f, 1f, Mathf.Clamp01((core + halo) * taper));
+                }
+            }
+
+            texture.SetPixels32(pixels);
+            texture.Apply();
+            Save(texture, name);
+        }
+
         private static void WriteHandle(string name, UITheme theme)
         {
             int size = 48;
@@ -651,15 +689,19 @@ namespace RocketBoost.UI.Editor
             WriteIcon("icon_star", p => StarDistance(p, 0.56f, 0.24f));
         }
 
-        private static void WriteIcon(string name, Func<Vector2, float> sdf)
-        {
-            Texture2D texture = NewTexture(IconSize, IconSize);
-            Color32[] pixels = new Color32[IconSize * IconSize];
-            float half = IconSize * 0.5f;
+        private static void WriteIcon(string name, Func<Vector2, float> sdf) =>
+            WriteShape(name, IconSize, IconSize, sdf);
 
-            for (int y = 0; y < IconSize; y++)
+        private static void WriteShape(string name, int width, int height, Func<Vector2, float> sdf)
+        {
+            Texture2D texture = NewTexture(width, height);
+            Color32[] pixels = new Color32[width * height];
+            float half = height * 0.5f;
+            float halfWidth = width * 0.5f;
+
+            for (int y = 0; y < height; y++)
             {
-                for (int x = 0; x < IconSize; x++)
+                for (int x = 0; x < width; x++)
                 {
                     float coverage = 0f;
 
@@ -668,8 +710,8 @@ namespace RocketBoost.UI.Editor
                         for (int sx = 0; sx < 2; sx++)
                         {
                             Vector2 p = new Vector2(
-                                (x + 0.25f + sx * 0.5f) / half - 1f,
-                                (y + 0.25f + sy * 0.5f) / half - 1f);
+                                (x + 0.25f + sx * 0.5f - halfWidth) / half,
+                                (y + 0.25f + sy * 0.5f - half) / half);
 
                             float pixelDistance = sdf(p) * half;
                             coverage += Mathf.Clamp01(0.5f - pixelDistance / 1.6f);
@@ -682,13 +724,34 @@ namespace RocketBoost.UI.Editor
                         continue;
                     }
 
-                    pixels[y * IconSize + x] = new Color(1f, 1f, 1f, coverage);
+                    pixels[y * width + x] = new Color(1f, 1f, 1f, coverage);
                 }
             }
 
             texture.SetPixels32(pixels);
             texture.Apply();
             Save(texture, name);
+        }
+
+        private static float RocketSdf(Vector2 p)
+        {
+            float body = SdRoundBox(p - new Vector2(0f, -0.02f), new Vector2(0.18f, 0.43f), 0.07f);
+            float nose = TriangleDistance(p, new Vector2(0f, 0.84f), new Vector2(-0.18f, 0.30f), new Vector2(0.18f, 0.30f));
+            float nozzle = SdRoundBox(p - new Vector2(0f, -0.50f), new Vector2(0.11f, 0.06f), 0.02f);
+            float leftFin = TriangleDistance(p, new Vector2(-0.17f, -0.16f), new Vector2(-0.40f, -0.52f), new Vector2(-0.17f, -0.52f));
+            float rightFin = TriangleDistance(p, new Vector2(0.17f, -0.16f), new Vector2(0.40f, -0.52f), new Vector2(0.17f, -0.52f));
+
+            float hull = Mathf.Min(Mathf.Min(body, nose), Mathf.Min(nozzle, Mathf.Min(leftFin, rightFin)));
+            float windowRing = Mathf.Abs(SdCircle(p - new Vector2(0f, 0.14f), 0.10f)) - 0.018f;
+            float windowHole = SdCircle(p - new Vector2(0f, 0.14f), 0.078f);
+            return Mathf.Max(Mathf.Min(hull, windowRing), -windowHole);
+        }
+
+        private static float FlameSdf(Vector2 p)
+        {
+            float cone = TriangleDistance(p, new Vector2(0f, -0.88f), new Vector2(-0.42f, 0.16f), new Vector2(0.42f, 0.16f));
+            float bulb = SdCircle(p - new Vector2(0f, 0.22f), 0.34f);
+            return Mathf.Min(cone, bulb);
         }
 
         private static float TriangleDistance(Vector2 p, Vector2 a, Vector2 b, Vector2 c)
@@ -910,6 +973,9 @@ namespace RocketBoost.UI.Editor
                 case "button_selected":
                 case "button_border": return new Vector4(20f, 20f, 20f, 20f);
                 case "pill": return new Vector4(32f, 32f, 32f, 32f);
+                // The tapered ends live inside the horizontal borders, so stretching the
+                // 2px core row keeps the sweep's shape at any bar width.
+                case "menu_streak": return new Vector4(58f, 11f, 58f, 11f);
                 case "gauge_track":
                 case "gauge_fill": return new Vector4(10f, 10f, 10f, 10f);
                 default: return Vector4.zero;

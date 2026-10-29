@@ -157,32 +157,74 @@ namespace RocketBoost.UI.Editor
             border.raycastTarget = false;
 
             Image iconImage = null;
+            TextMeshProUGUI label;
             bool iconOnly = icon != null && string.IsNullOrEmpty(labelText);
-            if (icon != null)
+
+            if (icon != null && !iconOnly)
             {
-                RectTransform iconRect = NewRect("Icon", root);
-                if (iconOnly)
-                {
-                    Place(iconRect, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(26f, 26f));
-                }
-                else
-                {
-                    Place(iconRect, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(24f, 0f), new Vector2(28f, 28f));
-                }
+                // Icon and label are measured together and centered as one row, so short
+                // labels do not sit against the left edge of a wide button.
+                RectTransform row = NewRect("Content", root);
+                Place(row, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(0f, 32f));
 
+                HorizontalLayoutGroup layout = row.gameObject.AddComponent<HorizontalLayoutGroup>();
+                layout.childAlignment = TextAnchor.MiddleCenter;
+                layout.spacing = 12f;
+                layout.padding = new RectOffset(0, 0, 0, 0);
+                layout.childControlWidth = true;
+                layout.childControlHeight = false;
+                layout.childForceExpandWidth = false;
+                layout.childForceExpandHeight = false;
+
+                ContentSizeFitter fitter = row.gameObject.AddComponent<ContentSizeFitter>();
+                fitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
+                fitter.verticalFit = ContentSizeFitter.FitMode.Unconstrained;
+
+                RectTransform iconRect = NewRect("Icon", row);
+                Place(iconRect, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(28f, 28f));
+                LayoutElement iconLayout = iconRect.gameObject.AddComponent<LayoutElement>();
+                iconLayout.preferredWidth = 28f;
+                iconLayout.preferredHeight = 28f;
+                iconLayout.flexibleWidth = 0f;
                 iconImage = AddImage(iconRect, icon, theme.primary);
-            }
 
-            RectTransform labelRect = NewRect("Label", root);
-            Stretch(labelRect, icon != null ? 68f : 24f, 24f, 0f, 0f);
-            TextMeshProUGUI label = AddText(
-                labelRect,
-                labelText,
-                theme.bodyFont,
-                fontSize > 0f ? fontSize : theme.labelSize,
-                theme.textPrimary,
-                icon != null && !iconOnly ? TextAlignmentOptions.MidlineLeft : TextAlignmentOptions.Center,
-                2f);
+                RectTransform labelRect = NewRect("Label", row);
+                labelRect.sizeDelta = new Vector2(0f, 32f);
+                label = AddText(
+                    labelRect,
+                    labelText,
+                    theme.bodyFont,
+                    fontSize > 0f ? fontSize : theme.labelSize,
+                    theme.textPrimary,
+                    TextAlignmentOptions.MidlineLeft,
+                    2f);
+                label.textWrappingMode = TextWrappingModes.NoWrap;
+
+                LayoutElement labelLayout = labelRect.gameObject.AddComponent<LayoutElement>();
+                labelLayout.preferredHeight = 32f;
+                labelLayout.flexibleWidth = 0f;
+            }
+            else
+            {
+                if (icon != null)
+                {
+                    RectTransform iconRect = NewRect("Icon", root);
+                    Place(iconRect, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(26f, 26f));
+                    iconImage = AddImage(iconRect, icon, theme.primary);
+                }
+
+                RectTransform labelRect = NewRect("Label", root);
+                Stretch(labelRect, icon != null ? 68f : 24f, 24f, 0f, 0f);
+                label = AddText(
+                    labelRect,
+                    labelText,
+                    theme.bodyFont,
+                    fontSize > 0f ? fontSize : theme.labelSize,
+                    theme.textPrimary,
+                    TextAlignmentOptions.Center,
+                    2f);
+                label.textWrappingMode = TextWrappingModes.NoWrap;
+            }
 
             Set(themed, "button", button);
             Set(themed, "background", background);
@@ -202,6 +244,143 @@ namespace RocketBoost.UI.Editor
             Place(root, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), position, size);
             AddImage(root, theme.panelSprite, Color.white, sliced: true, raycast: true);
             return root.gameObject;
+        }
+
+        /// <summary>
+        /// Boxless menu row: a transparent hit rect, a centred display-font label and the glow
+        /// streak that lights up under whichever row holds focus.
+        /// </summary>
+        public static GameObject BuildListButton(
+            Transform parent,
+            string name,
+            string labelText,
+            UITheme theme,
+            string hint,
+            Vector2 position,
+            float width = 0f)
+        {
+            RectTransform root = NewRect(name, parent);
+            Place(root, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), position,
+                new Vector2(width > 0f ? width : theme.menuListWidth, theme.menuListHeight));
+
+            // Null sprite + clear tint: invisible, but still the raycast target for mouse focus.
+            Image background = AddImage(root, null, Color.clear, raycast: true);
+
+            Button button = root.gameObject.AddComponent<Button>();
+            button.targetGraphic = background;
+            button.transition = Selectable.Transition.None;
+
+            ThemedButton themed = root.gameObject.AddComponent<ThemedButton>();
+
+            RectTransform labelRect = NewRect("Label", root);
+            Stretch(labelRect, 0f, 0f, 0f, 0f);
+            TextMeshProUGUI label = AddText(labelRect, labelText, theme.displayFont, theme.menuListSize,
+                theme.textPrimary, TextAlignmentOptions.Center, theme.menuListTracking);
+            label.textWrappingMode = TextWrappingModes.NoWrap;
+
+            RectTransform barRect = NewRect("SelectionBar", root);
+            Place(barRect, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), Vector2.zero,
+                new Vector2(theme.selectionBarWidth, theme.selectionBarHeight));
+            Image bar = AddImage(barRect, theme.selectionStreakSprite, Color.clear, sliced: true);
+            bar.raycastTarget = false;
+
+            Set(themed, "button", button);
+            Set(themed, "background", background);
+            Set(themed, "label", label);
+            Set(themed, "selectionBar", bar);
+            Set(themed, "variant", UIButtonVariant.List);
+            Set(themed, "hintText", hint);
+
+            themed.ApplyTheme(theme);
+            return root.gameObject;
+        }
+
+        /// <summary>
+        /// Bottom caption bar: the gamepad keys that act right now, console style. Stretches to
+        /// the parent's width so it survives every aspect ratio.
+        /// </summary>
+        public static RectTransform BuildPromptStrip(
+            Transform parent,
+            UITheme theme,
+            float bottom,
+            params PromptEntry[] entries)
+        {
+            RectTransform root = NewRect("PromptStrip", parent);
+            root.anchorMin = new Vector2(0f, 0f);
+            root.anchorMax = new Vector2(1f, 0f);
+            root.pivot = new Vector2(0.5f, 0f);
+            root.anchoredPosition = new Vector2(0f, bottom);
+            root.sizeDelta = new Vector2(0f, theme.promptStripHeight);
+
+            RectTransform band = NewRect("Band", root);
+            Stretch(band, 0f, 0f, 0f, 0f);
+            AddImage(band, null, UITheme.Alpha(theme.backgroundDeep, 0.72f));
+
+            RectTransform rule = NewRect("Rule", root);
+            rule.anchorMin = new Vector2(0f, 1f);
+            rule.anchorMax = new Vector2(1f, 1f);
+            rule.pivot = new Vector2(0.5f, 1f);
+            rule.anchoredPosition = Vector2.zero;
+            rule.sizeDelta = new Vector2(0f, 2f);
+            AddImage(rule, theme.gaugeFillSprite, UITheme.Alpha(theme.primary, 0.22f), sliced: true);
+
+            RectTransform row = NewRect("Entries", root);
+            Stretch(row, theme.spaceXxl, theme.spaceXxl, 0f, 0f);
+            HorizontalLayoutGroup layout = row.gameObject.AddComponent<HorizontalLayoutGroup>();
+            layout.childAlignment = TextAnchor.MiddleCenter;
+            layout.spacing = theme.spaceXl;
+            layout.childControlWidth = true;
+            layout.childControlHeight = true;
+            layout.childForceExpandWidth = false;
+            layout.childForceExpandHeight = false;
+
+            foreach (PromptEntry entry in entries)
+            {
+                BuildPromptChip(row, theme, entry);
+            }
+
+            return root;
+        }
+
+        private static void BuildPromptChip(Transform parent, UITheme theme, PromptEntry entry)
+        {
+            RectTransform cell = NewRect($"Prompt_{entry.glyph}", parent);
+            cell.sizeDelta = new Vector2(160f, theme.promptGlyphSize);
+            LayoutElement cellLayout = cell.gameObject.AddComponent<LayoutElement>();
+            cellLayout.preferredHeight = theme.promptGlyphSize;
+            cellLayout.flexibleWidth = 0f;
+
+            HorizontalLayoutGroup cellRow = cell.gameObject.AddComponent<HorizontalLayoutGroup>();
+            cellRow.childAlignment = TextAnchor.MiddleCenter;
+            cellRow.spacing = theme.spaceSm;
+            cellRow.childControlWidth = true;
+            cellRow.childControlHeight = false;
+            cellRow.childForceExpandWidth = false;
+            cellRow.childForceExpandHeight = false;
+
+            ContentSizeFitter fitter = cell.gameObject.AddComponent<ContentSizeFitter>();
+            fitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
+            fitter.verticalFit = ContentSizeFitter.FitMode.Unconstrained;
+
+            RectTransform glyphRect = NewRect("Glyph", cell);
+            glyphRect.sizeDelta = new Vector2(theme.promptGlyphSize, theme.promptGlyphSize);
+            LayoutElement glyphLayout = glyphRect.gameObject.AddComponent<LayoutElement>();
+            glyphLayout.preferredWidth = theme.promptGlyphSize;
+            glyphLayout.preferredHeight = theme.promptGlyphSize;
+            AddImage(glyphRect, theme.ringSprite, UITheme.Alpha(theme.primary, 0.75f));
+
+            RectTransform glyphTextRect = NewRect("Key", glyphRect);
+            Stretch(glyphTextRect, 0f, 0f, 0f, 0f);
+            AddText(glyphTextRect, entry.glyph, theme.bodyFont, theme.promptLabelSize - 3f,
+                theme.primary, TextAlignmentOptions.Center, 0f);
+
+            RectTransform actionRect = NewRect("Action", cell);
+            actionRect.sizeDelta = new Vector2(0f, theme.promptGlyphSize);
+            LayoutElement actionLayout = actionRect.gameObject.AddComponent<LayoutElement>();
+            actionLayout.preferredHeight = theme.promptGlyphSize;
+            TextMeshProUGUI action = AddText(actionRect, entry.action, theme.bodyFont, theme.promptLabelSize,
+                theme.textSecondary, TextAlignmentOptions.MidlineLeft, 3f);
+            action.textWrappingMode = TextWrappingModes.NoWrap;
         }
 
         public static GameObject BuildSlider(Transform parent, string name, UITheme theme, Vector2 position, float width, float height = 32f)
@@ -241,6 +420,11 @@ namespace RocketBoost.UI.Editor
             slider.value = 0.7f;
             slider.transition = Selectable.Transition.None;
             slider.navigation = new Navigation { mode = Navigation.Mode.Automatic };
+
+            // Added after the Slider so its drag runs last and wins over the handle's own delta move.
+            SliderClickToValue clickToValue = root.gameObject.AddComponent<SliderClickToValue>();
+            Set(clickToValue, "slider", slider);
+            Set(clickToValue, "handle", handleRect);
 
             return root.gameObject;
         }
@@ -354,5 +538,21 @@ namespace RocketBoost.UI.Editor
             AssetDatabase.SaveAssets();
             return asset;
         }
+    }
+
+    /// <summary>One "A = CONFIRM" pair in a prompt strip. Written as a plain tuple at call sites.</summary>
+    public struct PromptEntry
+    {
+        public string glyph;
+        public string action;
+
+        public PromptEntry(string glyph, string action)
+        {
+            this.glyph = glyph;
+            this.action = action;
+        }
+
+        public static implicit operator PromptEntry((string glyph, string action) pair) =>
+            new PromptEntry(pair.glyph, pair.action);
     }
 }

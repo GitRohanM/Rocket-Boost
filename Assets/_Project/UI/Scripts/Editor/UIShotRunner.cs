@@ -19,6 +19,7 @@ namespace RocketBoost.UI.Editor
         private static readonly string OutputRoot = Path.GetFullPath("Logs/UI-Shots");
 
         private static float nextStepAt;
+        private static float settleDeadline;
         private static int step;
         private static bool running;
         private static bool bootstrapping;
@@ -118,6 +119,7 @@ namespace RocketBoost.UI.Editor
             running = true;
             step = 0;
             nextStepAt = Time.realtimeSinceStartup + 2.5f;
+            settleDeadline = nextStepAt + 4f;
             EditorApplication.update += Tick;
             EditorApplication.isPlaying = true;
             Debug.Log($"[UIShots] Capture started at {OutputDir} ({Screen.width}x{Screen.height}).");
@@ -151,6 +153,12 @@ namespace RocketBoost.UI.Editor
             {
                 Debug.LogWarning($"[UIShots] Step {step}: UIManager.Instance is null; retrying.");
                 nextStepAt = Time.realtimeSinceStartup + 0.5f;
+                return;
+            }
+
+            if (IsCaptureStep(step) && !UiSettled() && Time.realtimeSinceStartup < settleDeadline)
+            {
+                nextStepAt = Time.realtimeSinceStartup + 0.1f;
                 return;
             }
 
@@ -266,6 +274,28 @@ namespace RocketBoost.UI.Editor
         {
             step++;
             nextStepAt = Time.realtimeSinceStartup + delay;
+            settleDeadline = nextStepAt + 4f;
+        }
+
+        private static bool IsCaptureStep(int index) =>
+            index == 0 || index == 2 || index == 4 || index == 6 || index == 8 || index == 10 || index == 12 || index == 15;
+
+        /// <summary>
+        /// True once every visible screen has finished fading in. The step delays are wall-clock
+        /// but entrances advance per rendered frame, so a stalled player loop can otherwise let a
+        /// capture run before a screen has populated itself.
+        /// </summary>
+        private static bool UiSettled()
+        {
+            foreach (UIScreen screen in UnityEngine.Object.FindObjectsByType<UIScreen>(FindObjectsSortMode.None))
+            {
+                if (screen.IsVisible && screen.Group != null && screen.Group.alpha < 0.98f)
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         private static float CurtainAlpha(UIManager manager)

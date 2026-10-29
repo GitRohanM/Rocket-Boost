@@ -139,6 +139,10 @@ namespace RocketBoost.UI
                 content.anchoredPosition = contentHome + new Vector2(0f, -entranceOffset);
             }
 
+            // OnShown runs with the fade, not after it: screens that pop their panel there would
+            // otherwise play a second entrance and read as the menu opening twice.
+            OnShown();
+
             while (elapsed < entranceDuration)
             {
                 if (token != visibilityToken)
@@ -172,7 +176,6 @@ namespace RocketBoost.UI
                 content.anchoredPosition = contentHome;
             }
 
-            OnShown();
             SelectDefault();
         }
 
@@ -208,7 +211,10 @@ namespace RocketBoost.UI
         /// <summary>Selects the authored default control so gamepad/keyboard navigation always has focus.</summary>
         public void SelectDefault()
         {
-            if (defaultSelection == null || !defaultSelection.IsInteractable() || !defaultSelection.gameObject.activeInHierarchy)
+            // IsInteractable() also rejects a control sitting under a CanvasGroup that is still
+            // fading in, which is exactly when screens ask for the default focus. Read the
+            // authored flag instead so a fading menu can still receive its selection.
+            if (defaultSelection == null || !defaultSelection.interactable || !defaultSelection.gameObject.activeInHierarchy)
             {
                 return;
             }
