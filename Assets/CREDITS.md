@@ -20,7 +20,7 @@ OFL permits embedding and commercial use; the fonts are not sold on their own.
 | Interface Sounds pack (back_001, confirmation_001) | Kenney | CC0 1.0 | https://kenney.nl/assets/interface-sounds | `SFX/ui_back.ogg`, `SFX/ui_confirm.ogg` |
 | Sci-Fi Sounds pack (explosionCrunch_001) | Kenney | CC0 1.0 | https://kenney.nl/assets/sci-fi-sounds | `SFX/ui_crash.ogg` |
 | Music Jingles pack (jingles_PIZZI10) | Kenney | CC0 1.0 | https://kenney.nl/assets/music-jingles | `SFX/ui_level_complete.ogg` |
-| Menu Ambience Loop | Generated for this project | Project-owned (CC0-equivalent) | Synthesised in-project (numpy; one-off development script, not shipped) | `Music/MenuAmbience_Loop.wav` — looping main-menu music |
+| Menu Ambience Loop | Rohan M. | Original Project Asset | Custom synthesized audio | `Music/MenuAmbience_Loop.wav` — looping main-menu music |
 
 Kenney packs are released under CC0 1.0 (public domain). No attribution is required; it is
 recorded here anyway.

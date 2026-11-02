@@ -1,126 +1,63 @@
 # Rocket Boost 🚀
 
-[![Unity 6000.0.34f1](https://img.shields.io/badge/Unity-6000.0.34f1-black?logo=unity&logoColor=white)](https://unity.com/)
-[![Render Pipeline](https://img.shields.io/badge/Render%20Pipeline-URP-blue)](https://unity.com/srp/universal-render-pipeline)
-[![Tests](https://img.shields.io/badge/EditMode%20Tests-62%20Passing-brightgreen)](Assets/Tests/EditMode)
-[![Architecture](https://img.shields.io/badge/Architecture-Clean%20Domain--Driven-orange)](docs/ARCHITECTURE.md)
-[![License](https://img.shields.io/badge/License-MIT%20%2F%20Attribution-lightgrey)](Assets/CREDITS.md)
-
-An arcade precision physics flight game built in **Unity 6 (6000.0.34f1)** with Universal Render Pipeline (URP). Pilot a high-thrust rocket through three challenging sectors of kinetic obstacles, manage momentum and fuel-free thrust vectors, stick precision pad landings, and shatter sector time records.
-
-Engineered with **Clean Architecture** principles: a strictly decoupled, pure C# domain layer (`noEngineReferences: true`) with **62 automated EditMode unit tests**, an idempotent procedural sci-fi UI design system, an event-driven session finite state machine, and zero-allocation HUD performance.
+An arcade precision physics flight game built in **Unity 6 (6000.0.34f1)** with the Universal Render Pipeline (URP). Pilot a high-thrust rocket through challenging sectors filled with kinetic obstacles, manage inertia and rotational momentum, stick precision pad landings, and beat sector time records.
 
 ---
 
-## 🎮 Play & Demo
+## 🎮 Features
 
-- **Platforms:** Windows Standalone (x86_64) | WebGL (Browser)
-- **Engine Version:** Unity 6000.0.34f1 (URP)
-- **Play Online:** *(Add your WebGL itch.io / GitHub Pages link here)*
+### Gameplay & Physics
+- **Momentum-Based Flight:** Dual-thruster rotational torque and primary vector propulsion with tuned inertial damping.
+- **Kinetic Hazards:** Dynamic oscillating barriers, rotating hazard gates, and precision navigation gauntlets.
+- **Precision Landing Detection:** Contact angle and descent velocity validation on launch and landing pads.
+- **Time Attack & Ranking:** High-precision sector timer with dynamic **S / A / B / C** rank evaluations based on clear time and attempt count. Best times are automatically saved locally.
 
----
+### UI & Audio Polish
+- **Sci-Fi Theme:** Cohesive UI design system with dynamic HUD, sector selection, settings, and mission debrief screens.
+- **Independent UI Animations:** Custom tween system running on unscaled time, ensuring silky-smooth menus and animations while the game physics is paused.
+- **Audio Architecture:** Dedicated audio mixer with separate Master, Music, and SFX channels, featuring custom menu ambience and responsive sound effects.
 
-## ✨ Key Features
-
-### 🕹️ Physics & Core Gameplay
-- **Momentum-Based Flight:** Dual-thruster rotational torque and main vector propulsion with tuned inertial damping.
-- **Dynamic Kinetic Hazards:** Oscillating barriers, rotating hazard gates, and kinetic death zones built with kinematic physics and DOTween integration.
-- **Precision Landing Detection:** Contact angle and speed verification on dedicated launch pads and landing pads.
-- **Record & Ranking System:** Microsecond-accurate mission timer with dynamic S/A/B/C rank tier evaluations based on completion time and attempt count.
-
-### 📐 Engineering & Architecture
-- **Strict Domain Layering:** Game rules, timer arithmetic, rank calculations, and progression logic live in `RocketBoost.Core` without any `UnityEngine` dependency.
-- **62 Automated EditMode Tests:** Comprehensive unit test coverage for float truncation, culture-invariant time formatting, rank boundary cases, and best-time store persistence.
-- **Repository Seam for Persistence:** High scores persist via an `IKeyValueStore` abstraction (`PlayerPrefsKeyValueStore`), making cloud or file-based save swaps trivial.
-- **Robust Session State Machine:** Centralized `GameManager` enforces clean transitions across `MainMenu`, `Playing`, `Paused`, `LevelComplete`, and `GameOver`, preventing double-collision race conditions and timescale freezes.
-- **Domain Reload Optimization:** Built for zero-reload fast playmode iteration (*Enter Play Mode Options: Domain Reload Disabled*) with explicit static lifecycle resets.
-- **Zero-Allocation Hot Paths:** HUD timer avoids per-frame string allocations via TextMeshPro char-buffer formatting.
-
-### 🎨 Custom Sci-Fi UI System & Automation Pipeline
-- **Theme-Driven Design System:** Single ScriptableObject (`UITheme.asset`) controls color palette, fonts (Orbitron / Rajdhani), spacing scales, corner radii, and UI audio stings.
-- **Idempotent Editor Builder:** One-click menu tool (`Rocket Boost → UI → Rebuild UI System`) procedurally generates 9-slice sprites, configures TMP styling, builds screen prefabs, and wires the persistent `UIRoot` across all scenes.
-- **Multi-Screen Lifecycle Manager:** `UIManager` orchestrates primary screens (`MainMenu`, `LevelSelect`, `Hud`, `Loading`) and stacked modals (`Pause`, `LevelComplete`, `GameOver`, `Settings`).
-- **Unscaled Motion Tweening:** Custom `UITween` runner executes on `Time.unscaledDeltaTime`, ensuring silky-smooth modal transitions while game physics is paused.
-- **AudioMixer Bus Routing:** Dedicated master, music, and SFX channels with logarithmic decibel conversion math.
+### Engineering Highlights
+- **Decoupled Core Logic:** Game scoring, rank calculations, timer formatting, and progression logic live in `RocketBoost.Core`—a pure C# assembly with zero engine dependencies (`noEngineReferences: true`).
+- **62 Automated Unit Tests:** Comprehensive EditMode test coverage in `RocketBoost.Tests.EditMode` verifying timer truncation, culture invariance, ranking edge cases, and high-score persistence.
+- **Zero-Allocation HUD:** Change-driven TextMeshPro formatting avoids per-frame string allocations during flight.
+- **Fast Playmode Ready:** Safe for Unity's *Enter Play Mode Options* with explicit static lifecycle resets across domain reloads.
 
 ---
 
 ## 🕹️ Controls
 
-| Action | Keyboard | Controller / Notes |
-| :--- | :--- | :--- |
-| **Main Thrust** | `Space` | Fires booster thruster & particle plume |
-| **Rotate Counter-Clockwise** | `A` / `Left Arrow` | Port steering nozzle |
-| **Rotate Clockwise** | `D` / `Right Arrow` | Starboard steering nozzle |
-| **Pause / Menu Back** | `Escape` | Pauses physics, opens unscaled modal |
-| **Skip Level (Dev / Editor)** | `L` | Instantly advances to the next sector |
-| **Toggle Collisions (Dev / Editor)** | `C` | Invulnerability bypass for testing |
+| Action | Primary Key | Alternate Key | Description |
+| :--- | :--- | :--- | :--- |
+| **Main Boost** | `Space` | - | Engages main thrusters & particle plume |
+| **Steer Port (Left)** | `A` | `Left Arrow` | Rotates rocket counter-clockwise |
+| **Steer Starboard (Right)** | `D` | `Right Arrow` | Rotates rocket clockwise |
+| **Pause / Resume** | `Escape` | - | Pauses physics and opens mission menu |
+| **Quick Restart** | `R` (in menus) | UI Button | Respawns rocket at the launch pad |
+
+*Debug keys available in Editor / Development builds: `L` (advance level), `C` (toggle invulnerability).*
 
 ---
 
-## 🏗️ Architecture Overview
+## 🚀 Getting Started
 
-The codebase strictly enforces unidirectional dependency flow:
+### Prerequisites
+- **Unity Hub**
+- **Unity 6 (6000.0.34f1)** with Universal Render Pipeline (URP)
 
-```
-┌────────────────────────────────────────────────────────┐
-│               Assembly-CSharp-Editor                   │  Idempotent UI Builders, Scene Snapshots
-└───────────────────────────┬────────────────────────────┘
-                            │
-┌───────────────────────────▼────────────────────────────┐
-│                  Assembly-CSharp / UI                  │  MonoBehaviours: Physics, Input, Audio, Screens
-└───────────────────────────┬────────────────────────────┘
-                            │ (depends on)
-┌───────────────────────────▼────────────────────────────┐
-│                    RocketBoost.Core                    │  Pure C#: Rules, Ranks, Time, Storage Seam
-│               (noEngineReferences: true)               │  100% engine-agnostic & unit tested
-└────────────────────────────────────────────────────────┘
-```
+### Installation
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/GitRohanM/Rocket-Boost.git
+   ```
+2. Open **Unity Hub**, click **Add → Add project from disk**, and select the `Rocket-Boost` directory.
+3. Open the project with **Unity 6000.0.34f1**.
+4. In the Project window, navigate to `Assets/Scenes/MainMenu.unity` and press **Play**.
 
-### Session State Machine
-
-```mermaid
-stateDiagram-v2
-    [*] --> MainMenu: Scene Loaded
-    MainMenu --> Playing: Start Mission / Select Level
-    Playing --> Paused: Press [Esc]
-    Paused --> Playing: Resume
-    Playing --> LevelComplete: Touch Landing Pad
-    Playing --> GameOver: Collision with Obstacle
-    LevelComplete --> Playing: Next Sector
-    LevelComplete --> MainMenu: Return to Base
-    GameOver --> Playing: Instant Restart
-    GameOver --> MainMenu: Return to Base
-```
-
-For complete technical specifications on state lifecycles, timer formatting, and persistence guarantees, read [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
-
----
-
-## 🧪 Automated Testing
-
-The project includes **62 EditMode unit tests** covering all non-visual game logic:
-
-| Test Suite | Focus Areas |
-| :--- | :--- |
-| **`MissionTimeFormatterTests`** | Truncation vs rounding, hundredths precision float drift, 99:59.99 clamp, culture invariants |
-| **`MissionRankCalculatorTests`** | Exact S/A/B/C threshold boundaries, 20s time cutoffs, attempt count weighting |
-| **`BestTimeStoreTests`** | First-run submission, record beating vs ties, per-level isolation, corrupt value recovery |
-| **`LevelProgressionTests`** | Next-level indexing, final sector wrap-around to menu, empty scene boundary safety |
-
-### Running Tests
-
-**Inside Unity Editor:**
-> Open **Window → General → Test Runner**, switch to the **EditMode** tab, and click **Run All**.
-
-**From Command Line (CI / Headless):**
-```powershell
-Unity.exe -batchmode -nographics `
-  -projectPath "G:\Unity Projects 2025\Rocket-Boost" `
-  -runTests -testPlatform EditMode `
-  -testResults "Logs/editmode-results.xml" `
-  -logFile "Logs/editmode.log"
-```
+### Running the Unit Tests
+1. In the top menu, go to **Window → General → Test Runner**.
+2. Select the **EditMode** tab.
+3. Click **Run All** to execute all 62 unit tests.
 
 ---
 
@@ -129,61 +66,26 @@ Unity.exe -batchmode -nographics `
 ```
 Rocket-Boost/
 ├── Assets/
-│   ├── _Project/                     # Isolated game assets (no third-party pollution)
-│   │   ├── UI/                       # UI architecture & procedural pipeline
-│   │   │   ├── Scripts/Core/         # UIManager, UIScreen, UITween, UIAudio, Settings
-│   │   │   ├── Scripts/Screens/      # MainMenu, LevelSelect, HUD, Pause, Settings, Debrief
-│   │   │   ├── Scripts/Widgets/      # ThemedButton, GaugeBar, LevelCard, StarRating
-│   │   │   ├── Scripts/Data/         # UITheme & LevelCatalog ScriptableObjects
-│   │   │   ├── Scripts/Editor/       # UIOverhaulBuilder, UIScreenFactory, UISpriteFactory
-│   │   │   ├── Prefabs/              # Generated UI screen prefabs & UIRoot
-│   │   │   └── Theme/                # Active theme & level catalog assets
-│   │   └── Audio/                    # GameAudioMixer & audio clips
+│   ├── _Project/               # Custom UI system, fonts, theme data, and audio
+│   │   ├── Audio/              # GameAudioMixer & sound assets
+│   │   └── UI/                 # Screen prefabs, widgets, and UI management scripts
+│   ├── Audio/                  # Core gameplay SFX (thruster, explosion, success)
+│   ├── Materials/              # Shaders, skybox, and glow materials
+│   ├── Prefabs/                # Player rocket, pads, hazards, cameras, volume profiles
+│   ├── Scenes/                 # MainMenu, Scene 1, Scene 2, Scene 3
 │   ├── Scripts/
-│   │   ├── Core/                     # Pure C# domain layer (RocketBoost.Core.asmdef)
-│   │   ├── Editor/                   # Scene snapshot & diagnostic editor tools
-│   │   └── *.cs                      # Movement, CollisionHandler, GameManager, Oscillator
-│   ├── Scenes/                       # MainMenu, Scene 1, Scene 2, Scene 3
-│   ├── Prefabs/                      # Player Rocket, Obstacles, Pads, Camera Rig
-│   └── Tests/EditMode/               # NUnit unit tests (RocketBoost.Tests.EditMode.asmdef)
-├── docs/
-│   ├── ARCHITECTURE.md               # Detailed architectural deep-dive & decisions
-│   └── PORTFOLIO_CASE_STUDY.md       # Full engineering case study for portfolios
-└── README.md
+│   │   ├── Core/               # Pure C# domain logic (RocketBoost.Core)
+│   │   └── *.cs                # Movement, CollisionHandler, GameManager, Oscillator
+│   └── Tests/EditMode/         # Automated NUnit test suite (RocketBoost.Tests.EditMode)
+└── Packages/                   # Package manifest & dependencies
 ```
 
 ---
 
-## 🚀 Getting Started
+## 📜 Credits & Licenses
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/GitRohanM/Rocket-Boost.git
-   ```
-2. **Open with Unity Hub:**
-   - Launch Unity Hub.
-   - Click **Add → Add project from disk**.
-   - Select the cloned folder and open with **Unity 6000.0.34f1**.
-3. **Play:**
-   - Open `Assets/Scenes/MainMenu.unity`.
-   - Click **Play** in the editor.
-
----
-
-## 🛠️ Tech Stack & Tools
-
-- **Engine:** Unity 6 (`6000.0.34f1`)
-- **Language:** C# 12 / .NET Standard 2.1
-- **Rendering:** Universal Render Pipeline (URP) with Post-Processing (Bloom, Vignette, Tonemapping)
-- **Input:** Unity New Input System
-- **Animation:** DOTween + In-House Unscaled UITween
-- **UI & Typography:** TextMeshPro + Custom Idempotent Procedural UI Generator
-- **Version Control:** Git with Git LFS & `.gitattributes` Unity SmartMerge
-
----
-
-## 📜 Credits & License
-
-- **Architecture, Code & UI Design:** Built by Rohan M.
-- **Third-Party Assets & Attribution:** See detailed licenses in [`Assets/CREDITS.md`](Assets/CREDITS.md) (DOTween by Demigiant, GameDevTV course base assets, Orbitron & Rajdhani open fonts).
-- Procedural UI sprites, custom audio loops, and UI architecture are original work created for this project.
+- **Development:** Rohan M.
+- **Base Assets:** GameDev.tv 3D models and textures.
+- **Audio:** Kenney UI Audio & Interface Packs (CC0 1.0).
+- **Fonts:** Orbitron (Matt McInerney) & Rajdhani (Indian Type Foundry) under SIL Open Font License 1.1.
+- Detailed licensing breakdown available in [`Assets/CREDITS.md`](Assets/CREDITS.md).

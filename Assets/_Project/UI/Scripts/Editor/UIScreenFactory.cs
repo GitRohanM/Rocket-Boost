@@ -1115,7 +1115,7 @@ namespace RocketBoost.UI.Editor
 
         private static void PromptStrip(RectTransform content, UITheme theme, params PromptEntry[] entries)
         {
-            UIBuildUtil.BuildPromptStrip(content, theme, 0f, entries);
+            // Bottom prompt strip removed per user request.
         }
 
         private static void Scrim(Transform parent, float alpha)
